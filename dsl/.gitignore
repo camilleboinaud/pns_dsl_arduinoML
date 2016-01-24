@@ -1,0 +1,6 @@
+#maven generated binaries
+target/
+
+#intelliJ ide
+*.iml
+.idea
