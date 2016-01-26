@@ -1,9 +1,9 @@
-package kernel.behavioral;
+package fr.polytech.unice.si5.arduinoML.kernel.behavioral;
 
 
-import kernel.NamedElement;
-import kernel.generator.Visitable;
-import kernel.generator.Visitor;
+import fr.polytech.unice.si5.arduinoML.kernel.generator.Visitable;
+import fr.polytech.unice.si5.arduinoML.kernel.generator.Visitor;
+import fr.polytech.unice.si5.arduinoML.kernel.NamedElement;
 
 import java.util.ArrayList;
 import java.util.List;

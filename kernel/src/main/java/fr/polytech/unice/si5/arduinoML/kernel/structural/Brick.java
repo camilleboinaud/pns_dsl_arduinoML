@@ -1,8 +1,8 @@
-package kernel.structural;
+package fr.polytech.unice.si5.arduinoML.kernel.structural;
 
 
-import kernel.NamedElement;
-import kernel.generator.Visitable;
+import fr.polytech.unice.si5.arduinoML.kernel.generator.Visitable;
+import fr.polytech.unice.si5.arduinoML.kernel.NamedElement;
 
 public abstract class Brick implements NamedElement, Visitable {
 

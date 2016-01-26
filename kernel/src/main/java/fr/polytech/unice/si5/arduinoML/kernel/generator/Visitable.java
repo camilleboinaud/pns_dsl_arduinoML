@@ -1,4 +1,4 @@
-package kernel.generator;
+package fr.polytech.unice.si5.arduinoML.kernel.generator;
 
 public interface Visitable {
 

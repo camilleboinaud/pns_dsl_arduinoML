@@ -1,4 +1,4 @@
-package kernel;
+package fr.polytech.unice.si5.arduinoML.kernel;
 
 public interface NamedElement {
 
