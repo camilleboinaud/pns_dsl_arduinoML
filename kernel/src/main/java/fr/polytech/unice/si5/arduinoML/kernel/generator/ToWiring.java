@@ -1,6 +1,7 @@
 package fr.polytech.unice.si5.arduinoML.kernel.generator;
 
 
+import fr.polytech.unice.si5.arduinoML.kernel.Morse;
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.*;
 import fr.polytech.unice.si5.arduinoML.kernel.App;
 import fr.polytech.unice.si5.arduinoML.kernel.structural.*;
@@ -122,4 +123,45 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), action.getValue()));
 	}
 
+	@Override
+	public void visit(Morse morse){
+		w(String.format("%s",morse.getCode().getContent()));
+
+
+		/*void setup()
+		{
+			pinMode( PIN_OUT, OUTPUT );
+			digitalWrite( PIN_OUT, LOW );
+		}
+
+		void loop()
+		{
+			String morseWord = encode( "SOS " );
+
+			for(int i=0; i<=morseWord.length(); i++)
+			{
+				switch( morseWord[i] )
+				{
+					case '.': //dit
+						digitalWrite( PIN_OUT, HIGH );
+						delay( UNIT_LENGTH );
+						digitalWrite( PIN_OUT, LOW );
+						delay( UNIT_LENGTH );
+
+						break;
+
+					case '-': //dah
+						digitalWrite( PIN_OUT, HIGH );
+						delay( UNIT_LENGTH*3 );
+						digitalWrite( PIN_OUT, LOW );
+						delay( UNIT_LENGTH );
+
+						break;
+
+					case ' ': //gap
+						delay( UNIT_LENGTH );
+				}
+			}
+		}*/
+	}
 }

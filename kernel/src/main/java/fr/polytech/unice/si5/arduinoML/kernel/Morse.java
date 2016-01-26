@@ -1,14 +1,15 @@
-package kernel.morse;
+package fr.polytech.unice.si5.arduinoML.kernel;
 
-import kernel.NamedElement;
-import kernel.generator.Visitable;
-import kernel.generator.Visitor;
+import fr.polytech.unice.si5.arduinoML.kernel.generator.*;
+import fr.polytech.unice.si5.arduinoML.kernel.structural.Code;
+
 
 /**
  * Created by user on 26/01/16.
  */
 public class Morse implements NamedElement, Visitable {
     private  String name;
+    private Code code;
 
     @Override
     public String getName(){
@@ -26,4 +27,7 @@ public class Morse implements NamedElement, Visitable {
     }
 
 
+    public Code getCode() {
+        return code;
+    }
 }
