@@ -36,7 +36,6 @@ class ArduinoMLDSL {
         binding.setVariable("greater_or_equal_to", OPERATOR.GE)
         binding.setVariable("lower_than", OPERATOR.LT)
         binding.setVariable("lower_or_equal_to", OPERATOR.LE)
-
         binding.setVariable("degrees", UnitEnum.CELSIUS_DEGREE)
         binding.setVariable("volts", UnitEnum.VOLT)
     }

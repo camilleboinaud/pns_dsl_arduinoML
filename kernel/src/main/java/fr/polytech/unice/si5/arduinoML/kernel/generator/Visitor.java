@@ -3,10 +3,7 @@ package fr.polytech.unice.si5.arduinoML.kernel.generator;
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.*;
 import fr.polytech.unice.si5.arduinoML.kernel.App;
 import fr.polytech.unice.si5.arduinoML.kernel.Morse;
-import fr.polytech.unice.si5.arduinoML.kernel.structural.AnalogicalActuator;
-import fr.polytech.unice.si5.arduinoML.kernel.structural.AnalogicalSensor;
-import fr.polytech.unice.si5.arduinoML.kernel.structural.DigitalActuator;
-import fr.polytech.unice.si5.arduinoML.kernel.structural.DigitalSensor;
+import fr.polytech.unice.si5.arduinoML.kernel.structural.*;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,9 +19,11 @@ public abstract class Visitor<T> {
 
 	public abstract void visit(DigitalActuator actuator);
 	public abstract void visit(AnalogicalActuator actuator);
+	public abstract void visit(Actuator actuator);
 
 	public abstract void visit(DigitalSensor sensor);
 	public abstract void visit(AnalogicalSensor sensor);
+	public abstract void visit(Sensor sensor);
 
 	public abstract void visit(SimpleExpression simpleExpression);
 	public abstract void visit(BooleanExpression booleanExpression);

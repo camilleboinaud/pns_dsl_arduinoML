@@ -151,6 +151,7 @@ abstract class ArduinoMLBasescript extends Script{
                             }]
                         }]
                     }]
+
                 }]
             }
             [when: closure]
@@ -223,4 +224,13 @@ abstract class ArduinoMLBasescript extends Script{
         action
     }
 
+    // morse "name"
+    def morse(String name) {
+        ((ArduinoMLBinding)this.getBinding()).getModel().createMorse(name)
+    }
+
+    // generate name
+    def generate(String name) {
+        println(((ArduinoMLBinding) this.getBinding()).getModel().generate(name).toString())
+    }
 }
