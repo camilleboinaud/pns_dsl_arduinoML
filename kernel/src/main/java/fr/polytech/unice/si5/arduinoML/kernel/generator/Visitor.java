@@ -2,6 +2,7 @@ package fr.polytech.unice.si5.arduinoML.kernel.generator;
 
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.*;
 import fr.polytech.unice.si5.arduinoML.kernel.App;
+import fr.polytech.unice.si5.arduinoML.kernel.Morse;
 import fr.polytech.unice.si5.arduinoML.kernel.structural.AnalogicalActuator;
 import fr.polytech.unice.si5.arduinoML.kernel.structural.AnalogicalSensor;
 import fr.polytech.unice.si5.arduinoML.kernel.structural.DigitalActuator;
@@ -32,6 +33,7 @@ public abstract class Visitor<T> {
 	public abstract void visit(AnalogicalCondition analogicalCondition);
 
 	public abstract void visit(Transition transition);
+	public abstract void visit(Morse morse);
 
 
 	/***********************
