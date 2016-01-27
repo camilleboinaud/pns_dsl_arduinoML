@@ -1,10 +1,12 @@
 package fr.polytech.unice.si5.arduinoML.dsl
 
+import com.sun.org.apache.xpath.internal.operations.Bool
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.Action
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.AnalogicalAction
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.AnalogicalCondition
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.BOOLEAN
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.BooleanExpression
+import fr.polytech.unice.si5.arduinoML.kernel.behavioral.Condition
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.DigitalAction
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.DigitalCondition
 import fr.polytech.unice.si5.arduinoML.kernel.behavioral.Expression
@@ -80,65 +82,114 @@ abstract class ArduinoMLBasescript extends Script{
         if(map.from != null && map.to != null){
 
             Expression expression = new SimpleExpression();
+            ((ArduinoMLBinding) this.getBinding()).getModel().createTransition(map.from, map.to, expression)
 
             def closure
+//            closure = { sensor ->
+//                [is: { operator ->
+//                    [value: { double value ->
+//                        [using: { unit ->
+//                            expression = map.from.transition.expression
+//                            if(expression == null){
+//                                map.from.transition.expression = new SimpleExpression()
+//                                expression.condition = anaCondition(sensor, operator, value, unit)
+//                            } else {
+//                                ((BooleanExpression)expression).right = anaCondition(sensor, operator, value, unit)
+//                            }
+//                            [and: {
+//                                BooleanExpression tmp = new BooleanExpression()
+//                                tmp.left = expression
+//                                tmp.booleanOperator = BOOLEAN.AND
+//                                expression = tmp
+//                                closure
+//                            }, or: {
+//                                BooleanExpression tmp = new BooleanExpression()
+//                                tmp.left = expression
+//                                tmp.booleanOperator = BOOLEAN.OR
+//                                expression = tmp
+//                                closure
+//                            }]
+//                        }]
+//                    }, and: {
+//                        expression = map.from.transition.expression
+//                        BooleanExpression tmp = new BooleanExpression()
+//                        tmp.left = expression
+//                        tmp.booleanOperator = BOOLEAN.AND
+//                        expression = tmp
+//                        closure
+//                    }, or: {
+//                        expression = map.from.transition.expression
+//                        BooleanExpression tmp = new BooleanExpression()
+//                        tmp.left = expression
+//                        tmp.booleanOperator = BOOLEAN.OR
+//                        expression = tmp
+//                        closure
+//                    }]
+//                }]
+//            }
             closure = { sensor ->
-                [is: { operator ->
-                    if(expression == null){
-                        expression = new SimpleExpression()
-                        expression.condition = digCondition(sensor, operator)
-                    } else {
-                        ((BooleanExpression)expression).right = digCondition(sensor, operator)
-                    }
+                [oops: { SIGNAL signal ->
+                    addExpressionToTransition(map.from, digCondition(sensor, signal))
+                    [and : {
+                        moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
+                        closure
+                    }, or: {
+                        moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
+                        closure
+                    }]
+                },
+                became: { OPERATOR operator ->
                     [value: { value ->
                         [using: { unit ->
-                           if(expression == null){
-                                expression = new SimpleExpression()
-                                expression.condition = anaCondition(sensor, operator, value, unit)
-                            } else {
-                                ((BooleanExpression)expression).right = anaCondition(sensor, operator, value, unit)
-                            }
-                            [and: {
-                                BooleanExpression tmp = new BooleanExpression()
-                                tmp.left = expression
-                                tmp.booleanOperator = BOOLEAN.AND
-                                expression = tmp
+                            addExpressionToTransition(map.from, anaCondition(sensor, operator, value, unit))
+                            [and : {
+                                moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
                                 closure
                             }, or: {
-                                BooleanExpression tmp = new BooleanExpression()
-                                tmp.left = expression
-                                tmp.booleanOperator = BOOLEAN.OR
-                                expression = tmp
+                                moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
                                 closure
                             }]
                         }]
-                    }, and: {
-                        BooleanExpression tmp = new BooleanExpression()
-                        tmp.left = expression
-                        tmp.booleanOperator = BOOLEAN.AND
-                        expression = tmp
-                        closure
-                    }, or: {
-                        BooleanExpression tmp = new BooleanExpression()
-                        tmp.left = expression
-                        tmp.booleanOperator = BOOLEAN.OR
-                        expression = tmp
-                        closure
                     }]
                 }]
             }
             [when: closure]
-
-            ((ArduinoMLBinding) this.getBinding()).getModel().createTransition(map.from, map.to, expression)
         }
     }
 
+    def moveToAddExpressionToTransition(State state, BOOLEAN booleanOp){
+        BooleanExpression tmp = new BooleanExpression()
+        tmp.left = state.transition.expression
+        tmp.booleanOperator = booleanOp
+
+        state.transition.expression = tmp
+    }
+
+    def addExpressionToTransition(State state, Condition condition){
+        if(state.transition.expression instanceof SimpleExpression
+                && ((SimpleExpression)state.transition.expression).condition == null){
+            ((SimpleExpression)state.transition.expression).condition = condition
+        } else if(state.transition.expression instanceof BooleanExpression){
+            ((BooleanExpression)state.transition.expression).right = condition
+        }
+    }
+
+
     def digCondition(DigitalSensor sensor, SIGNAL signal){
-        new DigitalCondition(sensor, signal)
+        DigitalCondition condition = new DigitalCondition()
+        condition.setSensor(sensor)
+        condition.setSignal(signal)
+
+        condition
     }
 
     def anaCondition(AnalogicalSensor sensor, OPERATOR operator, double value, UnitEnum unit){
-        new AnalogicalCondition(sensor, operator, convert(unit, value))
+        AnalogicalCondition condition = new AnalogicalCondition()
+        condition.setSensor(sensor)
+        condition.setOperator(operator)
+        condition.setValueToCompare(convert(unit, value))
+
+        condition
     }
 
     def initial(Map map){

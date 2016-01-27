@@ -15,7 +15,7 @@ state "on" means BUZZER becomes high
 
 initial state : OFF
 
-change from: OFF, to: ON when TEMPERATURE is greater than value 20 using degrees or BUTTON is high
+change from: OFF, to: ON when TEMPERATURE became greater_than value 20 using degrees or TEMPERATURE became lower_than value 10 using degrees
 //change from: ON, to: OFF when TEMPERATURE is lower than 20 using degrees or TEMPERATURE is greater than 30 using degrees
 
 
