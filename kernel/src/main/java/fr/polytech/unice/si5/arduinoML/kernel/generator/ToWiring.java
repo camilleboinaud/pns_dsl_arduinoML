@@ -66,11 +66,6 @@ public class ToWiring extends Visitor<StringBuffer> {
 	}
 
 	@Override
-	public void visit(Actuator actuator) {
-		w(String.format("  pinMode(%d, OUTPUT);  // %s [Actuator]", actuator.getPin(), actuator.getName()));
-	}
-
-	@Override
 	public void visit(DigitalSensor sensor) {
 		w(String.format("  pinMode(%d, INPUT);  // %s [DigitalSensor]", sensor.getPin(), sensor.getName()));
 	}
@@ -80,10 +75,6 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w(String.format("  pinMode(%d, INPUT);  // %s [AnalogicalSensor]", sensor.getPin(), sensor.getName()));
 	}
 
-	@Override
-	public void visit(Sensor sensor) {
-		w(String.format("  pinMode(%d, INPUT);  // %s [Sensor]", sensor.getPin(), sensor.getName()));
-	}
 
 
 	@Override
@@ -209,7 +200,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	private void writeDigtalOutputs(App app, SIGNAL signal) {
 		for(Brick brick : app.getBricks()) {
-			if(brick instanceof Actuator) { // Output pins
+			if(brick instanceof DigitalActuator) { // Output pins
 				w(String.format("\t\t\t\tdigitalWrite(%d,%s);", brick.getPin() , signal.name()));
 			}
 		}

@@ -19,11 +19,9 @@ public abstract class Visitor<T> {
 
 	public abstract void visit(DigitalActuator actuator);
 	public abstract void visit(AnalogicalActuator actuator);
-	public abstract void visit(Actuator actuator);
 
 	public abstract void visit(DigitalSensor sensor);
 	public abstract void visit(AnalogicalSensor sensor);
-	public abstract void visit(Sensor sensor);
 
 	public abstract void visit(SimpleExpression simpleExpression);
 	public abstract void visit(BooleanExpression booleanExpression);
