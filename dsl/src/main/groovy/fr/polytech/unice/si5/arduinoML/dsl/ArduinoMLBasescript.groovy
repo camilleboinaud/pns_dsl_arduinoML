@@ -80,51 +80,50 @@ abstract class ArduinoMLBasescript extends Script{
         if(map.from != null && map.to != null){
 
             Expression expression = new SimpleExpression();
-
-            def closure
             closure = { sensor ->
-                [is: { operator ->
-                    if(expression == null){
+                [became: { operator -> println("Haha")
+                   /* if(expression == null){
+
                         expression = new SimpleExpression()
                         expression.condition = digCondition(sensor, operator)
                     } else {
                         ((BooleanExpression)expression).right = digCondition(sensor, operator)
-                    }
-                    [value: { value ->
-                        [using: { unit ->
-                           if(expression == null){
+                    }*/
+                   /* [value: { value ->
+                        *//*[using: { unit ->
+                           *//**//*if(expression == null){
                                 expression = new SimpleExpression()
                                 expression.condition = anaCondition(sensor, operator, value, unit)
                             } else {
                                 ((BooleanExpression)expression).right = anaCondition(sensor, operator, value, unit)
-                            }
+                            }*//**//*
                             [and: {
-                                BooleanExpression tmp = new BooleanExpression()
+                                *//**//*BooleanExpression tmp = new BooleanExpression()
                                 tmp.left = expression
                                 tmp.booleanOperator = BOOLEAN.AND
-                                expression = tmp
+                                expression = tmp*//**//*
                                 closure
                             }, or: {
-                                BooleanExpression tmp = new BooleanExpression()
+                                *//**//*BooleanExpression tmp = new BooleanExpression()
                                 tmp.left = expression
                                 tmp.booleanOperator = BOOLEAN.OR
-                                expression = tmp
+                                expression = tmp*//**//*
                                 closure
                             }]
-                        }]
+                        }]*//*
                     }, and: {
-                        BooleanExpression tmp = new BooleanExpression()
+                        *//*BooleanExpression tmp = new BooleanExpression()
                         tmp.left = expression
                         tmp.booleanOperator = BOOLEAN.AND
-                        expression = tmp
+                        expression = tmp*//*
                         closure
                     }, or: {
-                        BooleanExpression tmp = new BooleanExpression()
+                        *//*BooleanExpression tmp = new BooleanExpression()
                         tmp.left = expression
                         tmp.booleanOperator = BOOLEAN.OR
-                        expression = tmp
+                        expression = tmp*//*
                         closure
-                    }]
+                    }]*/
                 }]
             }
             [when: closure]
@@ -172,4 +171,13 @@ abstract class ArduinoMLBasescript extends Script{
         action
     }
 
+    // morse "name"
+    def morse(String name) {
+        ((ArduinoMLBinding)this.getBinding()).getModel().createMorse(name)
+    }
+
+    // generate name
+    def generate(String name) {
+        println(((ArduinoMLBinding) this.getBinding()).getModel().generate(name).toString())
+    }
 }
