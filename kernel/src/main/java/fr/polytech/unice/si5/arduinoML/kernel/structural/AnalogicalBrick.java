@@ -7,22 +7,22 @@ import fr.polytech.unice.si5.arduinoML.kernel.generator.Visitable;
  */
 public abstract class AnalogicalBrick extends Brick implements Visitable {
 
-    private int rangeMin;
-    private int rangeMax;
+    private double rangeMin;
+    private double rangeMax;
 
-    public int getRangeMin() {
+    public double getRangeMin() {
         return rangeMin;
     }
 
-    public void setRangeMin(int rangeMin) {
+    public void setRangeMin(double rangeMin) {
         this.rangeMin = rangeMin;
     }
 
-    public int getRangeMax() {
+    public double getRangeMax() {
         return rangeMax;
     }
 
-    public void setRangeMax(int rangeMax) {
+    public void setRangeMax(double rangeMax) {
         this.rangeMax = rangeMax;
     }
 

@@ -10,7 +10,7 @@ public class AnalogicalCondition extends Condition{
 
     private AnalogicalSensor sensor;
     private OPERATOR operator;
-    private int valueToCompare;
+    private double valueToCompare;
 
     public AnalogicalSensor getSensor() {
         return sensor;
@@ -28,11 +28,11 @@ public class AnalogicalCondition extends Condition{
         this.operator = operator;
     }
 
-    public int getValueToCompare() {
+    public double getValueToCompare() {
         return valueToCompare;
     }
 
-    public void setValueToCompare(int valueToCompare) {
+    public void setValueToCompare(double valueToCompare) {
         this.valueToCompare = valueToCompare;
     }
 

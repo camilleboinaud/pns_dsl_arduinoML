@@ -5,8 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.unice.polytech.si5.arduinoML</groupId>
-    <artifactId>jvm-kernel</artifactId>
+    <artifactId>arduinoml-kernel</artifactId>
     <version>1.0</version>
+    <name>ArduinoML :: Kernel based on JVM</name>
+
     <build>
         <plugins>
             <plugin>

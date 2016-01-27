@@ -8,15 +8,15 @@ import fr.polytech.unice.si5.arduinoML.kernel.structural.AnalogicalActuator;
  */
 public class AnalogicalAction extends Action {
 
-    private int value;
+    private double value;
     private AnalogicalActuator actuator;
 
 
-    public int getValue() {
+    public double getValue() {
         return value;
     }
 
-    public void setValue(int value) {
+    public void setValue(double value) {
         this.value = value;
     }
 

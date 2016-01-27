@@ -2,9 +2,10 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.unice.polytech.dsl.arduino</groupId>
-    <artifactId>pns_dsl_arduinoML</artifactId>
+    <artifactId>arduinoml</artifactId>
     <version>1.0.0</version>
     <packaging>pom</packaging>
+    <name>ArduinoML</name>
 
     <modules>
         <module>kernel</module>

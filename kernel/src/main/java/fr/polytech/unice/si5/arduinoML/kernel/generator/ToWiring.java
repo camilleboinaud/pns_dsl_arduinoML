@@ -88,9 +88,9 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(Transition transition) {
-		w(String.format("  if( ");
+		w(String.format("  if( "));
 		transition.getExpression().accept(this);
-		w(String.format(" && guard ) {");
+		w(String.format(" && guard ) {"));
 
 		w("    time = millis();");
 
