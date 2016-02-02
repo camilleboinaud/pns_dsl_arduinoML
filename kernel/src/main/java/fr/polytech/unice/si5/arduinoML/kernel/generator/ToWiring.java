@@ -96,7 +96,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(AnalogicalCondition analogicalCondition) {
-		w(String.format("analogRead(%d) %s %d", analogicalCondition.getSensor().getPin(),
+		w(String.format("analogRead(%d) %s %f", analogicalCondition.getSensor().getPin(),
 				analogicalCondition.getOperator().getSymbol(), analogicalCondition.getValueToCompare()));
 	}
 
