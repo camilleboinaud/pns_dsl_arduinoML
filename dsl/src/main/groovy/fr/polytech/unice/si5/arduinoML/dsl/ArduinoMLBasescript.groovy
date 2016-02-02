@@ -85,73 +85,32 @@ abstract class ArduinoMLBasescript extends Script{
             ((ArduinoMLBinding) this.getBinding()).getModel().createTransition(map.from, map.to, expression)
 
             def closure
-//            closure = { sensor ->
-//                [is: { operator ->
-//                    [value: { double value ->
-//                        [using: { unit ->
-//                            expression = map.from.transition.expression
-//                            if(expression == null){
-//                                map.from.transition.expression = new SimpleExpression()
-//                                expression.condition = anaCondition(sensor, operator, value, unit)
-//                            } else {
-//                                ((BooleanExpression)expression).right = anaCondition(sensor, operator, value, unit)
-//                            }
-//                            [and: {
-//                                BooleanExpression tmp = new BooleanExpression()
-//                                tmp.left = expression
-//                                tmp.booleanOperator = BOOLEAN.AND
-//                                expression = tmp
-//                                closure
-//                            }, or: {
-//                                BooleanExpression tmp = new BooleanExpression()
-//                                tmp.left = expression
-//                                tmp.booleanOperator = BOOLEAN.OR
-//                                expression = tmp
-//                                closure
-//                            }]
-//                        }]
-//                    }, and: {
-//                        expression = map.from.transition.expression
-//                        BooleanExpression tmp = new BooleanExpression()
-//                        tmp.left = expression
-//                        tmp.booleanOperator = BOOLEAN.AND
-//                        expression = tmp
-//                        closure
-//                    }, or: {
-//                        expression = map.from.transition.expression
-//                        BooleanExpression tmp = new BooleanExpression()
-//                        tmp.left = expression
-//                        tmp.booleanOperator = BOOLEAN.OR
-//                        expression = tmp
-//                        closure
-//                    }]
-//                }]
-//            }
+
             closure = { sensor ->
-                [oops: { SIGNAL signal ->
-                    addExpressionToTransition(map.from, digCondition(sensor, signal))
-                    [and : {
-                        moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
-                        closure
-                    }, or: {
-                        moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
-                        closure
-                    }]
-                },
-                became: { OPERATOR operator ->
-                    [value: { value ->
-                        [using: { unit ->
-                            addExpressionToTransition(map.from, anaCondition(sensor, operator, value, unit))
-                            [and : {
-                                moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
-                                closure
-                            }, or: {
-                                moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
-                                closure
+                [became: { field ->
+                    if (field instanceof SIGNAL) {
+                        addExpressionToTransition(map.from, digCondition(sensor, (SIGNAL) field))
+                        [and : {
+                            moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
+                            closure
+                        }, or: {
+                            moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
+                            closure
+                        }]
+                    } else {
+                        [value: { value ->
+                            [using: { unit ->
+                                addExpressionToTransition(map.from, anaCondition(sensor, (OPERATOR) field, value, unit))
+                                [and : { newSensor ->
+                                    moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
+                                    closure(newSensor)
+                                }, or: { newSensor ->
+                                    moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
+                                    closure(newSensor)
+                                }]
                             }]
                         }]
-                    }]
-
+                    }
                 }]
             }
             [when: closure]
@@ -171,7 +130,9 @@ abstract class ArduinoMLBasescript extends Script{
                 && ((SimpleExpression)state.transition.expression).condition == null){
             ((SimpleExpression)state.transition.expression).condition = condition
         } else if(state.transition.expression instanceof BooleanExpression){
-            ((BooleanExpression)state.transition.expression).right = condition
+            SimpleExpression expression = new SimpleExpression()
+            expression.condition = condition
+            ((BooleanExpression)state.transition.expression).right = expression
         }
     }
 
