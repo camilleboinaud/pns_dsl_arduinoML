@@ -44,7 +44,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 			encodingMorseCode();
 			// Write morse code
 			w("void loop() {");
-			w(String.format("\tint UNIT_LENGTH = 1;"));
+			w(String.format("\tint UNIT_LENGTH = 300;"));
 			w(String.format("\tString morseWord = encode(\"%s\");", app.getMorseCode()));
 			generateMorseArduinoLoop(app);
 
