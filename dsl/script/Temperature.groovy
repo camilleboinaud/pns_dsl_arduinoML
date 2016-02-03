@@ -4,8 +4,8 @@
 
 digital actuator: "buzzer" on pin: 9
 digital sensor: "button" on pin: 8
-analogical sensor: "temperature" on pin: 4 with minValue: 0 and maxValue: 40 using degrees
-analogical actuator: "led" on pin: 10 with minValue: 0 and maxValue: 100 using volts
+analogical sensor: "temperature" on pin: 4
+analogical actuator: "led" on pin: 10
 
 state "off" means BUZZER becomes low and LED becomes 10
 state "on" means BUZZER becomes high

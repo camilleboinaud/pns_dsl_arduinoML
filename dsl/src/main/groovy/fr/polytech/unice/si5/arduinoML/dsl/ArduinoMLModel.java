@@ -32,12 +32,10 @@ public class ArduinoMLModel {
         this.binding = binding;
     }
 
-    public void createAnalogicalSensor(String name, int pin, double min, double max){
+    public void createAnalogicalSensor(String name, int pin){
         AnalogicalSensor sensor = new AnalogicalSensor();
         sensor.setName(name);
         sensor.setPin(pin);
-        sensor.setRangeMin(min);
-        sensor.setRangeMax(max);
 
         this.bricks.add(sensor);
         this.binding.setVariable(name.toUpperCase(), sensor);
@@ -53,12 +51,10 @@ public class ArduinoMLModel {
         this.binding.setVariable(name.toUpperCase(), sensor);
     }
 
-    public void createAnalogicalActuator(String name, int pin, double min, double max){
+    public void createAnalogicalActuator(String name, int pin){
         AnalogicalActuator actuator = new AnalogicalActuator();
         actuator.setName(name);
         actuator.setPin(pin);
-        actuator.setRangeMin(min);
-        actuator.setRangeMax(max);
 
         this.bricks.add(actuator);
         this.binding.setVariable(name.toUpperCase(), actuator);

@@ -2,7 +2,7 @@
  * Created by cboinaud on 26/01/16.
  */
 
-analogical sensor: "rotation" on pin: 3 with minValue: 0 and maxValue: 1000 using volts
+analogical sensor: "rotation" on pin: 3
 digital actuator: "led" on pin: 9
 
 state "off" means LED becomes low

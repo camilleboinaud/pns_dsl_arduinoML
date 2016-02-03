@@ -41,25 +41,11 @@ abstract class ArduinoMLBasescript extends Script{
     def analogical(Map map){
         if(map.actuator != null) {
             [on: {
-                Map on -> [with: {
-                    Map with -> [and: {
-                        Map and -> [using: {
-                            degrees -> ((ArduinoMLBinding) this.getBinding()).getModel()
-                                    .createAnalogicalActuator(map.actuator, on.pin, convert(degrees, with.minValue), convert(degrees,and.maxValue))
-                        }]
-                    }]
-                }]
+                Map on -> ((ArduinoMLBinding)this.getBinding()).getModel().createAnalogicalActuator(map.actuator, on.pin);
             }]
         } else if (map.sensor != null) {
             [on: {
-                Map on -> [with: {
-                    Map with -> [and: {
-                        Map and -> [using: {
-                            degrees -> ((ArduinoMLBinding) this.getBinding()).getModel()
-                                    .createAnalogicalSensor(map.sensor, on.pin, convert(degrees, with.minValue), convert(degrees,and.maxValue))
-                        }]
-                    }]
-                }]
+                Map on -> ((ArduinoMLBinding)this.getBinding()).getModel().createAnalogicalSensor(map.sensor, on.pin);
             }]
         }
     }
