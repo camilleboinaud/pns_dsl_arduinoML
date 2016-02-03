@@ -164,6 +164,9 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
 		w(String.format("\t\t}"));
 		w(String.format("\t}"));
+		w(String.format("\t//The repetion of the morse code"));
+		writeDigtalOutputs(app, SIGNAL.LOW);
+		w(String.format("\t\t\t\tdelay(UNIT_LENGTH * 10);"));
 	}
 
 	private void writeDigtalOutputs(App app, SIGNAL signal) {
