@@ -66,12 +66,12 @@ abstract class ArduinoMLBasescript extends Script{
 
     def state(String name) {
         List<Action> actions = new ArrayList<Action>()
-        ((ArduinoMLBinding) this.getBinding()).getModel().createState(name, actions)
+        State state = ((ArduinoMLBinding) this.getBinding()).getModel().createState(name, actions)
         // recursive closure to allow multiple and statements
         def closure
         closure = { actuator ->
             [becomes: { signal ->
-                actions.add(createAction(actuator, signal))
+                state.actions.add(createAction(actuator, signal))
                 [and: closure]
             }]
         }
@@ -163,7 +163,7 @@ abstract class ArduinoMLBasescript extends Script{
         def finalValue = value
         switch (unit){
             case UnitEnum.CELSIUS_DEGREE:
-                finalValue = 2048.0 * (0.05 + value)
+                finalValue = value * 20.48 + 102.4
                 break;
             case UnitEnum.VOLT:
                 break;

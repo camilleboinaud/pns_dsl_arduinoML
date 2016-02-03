@@ -96,15 +96,15 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(AnalogicalCondition analogicalCondition) {
-		w(String.format("analogRead(%d) %s %f", analogicalCondition.getSensor().getPin(),
-				analogicalCondition.getOperator().getSymbol(), analogicalCondition.getValueToCompare()));
+		w(String.format("analogRead(%d) %s %d", analogicalCondition.getSensor().getPin(),
+				analogicalCondition.getOperator().getSymbol(), (int)analogicalCondition.getValueToCompare()));
 	}
 
 	@Override
 	public void visit(Transition transition) {
-		w(String.format("  if( "));
+		w(String.format("  if(("));
 		transition.getExpression().accept(this);
-		w(String.format(" && guard ) {"));
+		w(String.format(") && guard ) {"));
 
 		w("    time = millis();");
 
@@ -133,7 +133,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(AnalogicalAction action) {
-		w(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), action.getValue()));
+		w(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), (int) action.getValue()));
 	}
 
 	@Override
