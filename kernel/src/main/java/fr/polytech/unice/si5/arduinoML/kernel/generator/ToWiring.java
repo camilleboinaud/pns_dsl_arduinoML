@@ -140,42 +140,6 @@ public class ToWiring extends Visitor<StringBuffer> {
 	public void visit(Morse morse){
 		w(String.format("%s",morse.getCode().getContent()));
 
-
-		/*void setup()
-		{
-			pinMode( PIN_OUT, OUTPUT );
-			digitalWrite( PIN_OUT, LOW );
-		}
-
-		void loop()
-		{
-			String morseWord = encode( "SOS " );
-
-			for(int i=0; i<=morseWord.length(); i++)
-			{
-				switch( morseWord[i] )
-				{
-					case '.': //dit
-						digitalWrite( PIN_OUT, HIGH );
-						delay( UNIT_LENGTH );
-						digitalWrite( PIN_OUT, LOW );
-						delay( UNIT_LENGTH );
-
-						break;
-
-					case '-': //dah
-						digitalWrite( PIN_OUT, HIGH );
-						delay( UNIT_LENGTH*3 );
-						digitalWrite( PIN_OUT, LOW );
-						delay( UNIT_LENGTH );
-
-						break;
-
-					case ' ': //gap
-						delay( UNIT_LENGTH );
-				}
-			}
-		}*/
 	}
 	private void generateMorseArduinoLoop(App app) {
 		w(String.format("\n\tfor(int i=0; i<=morseWord.length(); i++) {"));
@@ -190,7 +154,11 @@ public class ToWiring extends Visitor<StringBuffer> {
 		writeDigtalOutputs(app, SIGNAL.HIGH);
 		w(String.format("\t\t\t\tdelay(UNIT_LENGTH * 3);"));
 		writeDigtalOutputs(app, SIGNAL.LOW);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH * 3);"));
+		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
+		w(String.format("\t\t\t\tbreak;\n"));
+		w(String.format("\t\t\tcase '+': //Finish a letter"));
+		writeDigtalOutputs(app, SIGNAL.LOW);
+		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
 		w(String.format("\t\t\t\tbreak;\n"));
 		w(String.format("\t\t\tcase ' ' :"));
 		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
@@ -210,43 +178,43 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w(String.format("static const struct {"));
 		w(String.format("\tconst char letter, *code;"));
 		w(String.format("} MorseMap[] = {"));
-		w(String.format("\t{ 'A', \".-\" },"));
-		w(String.format("\t{ 'B', \"-...\" },"));
-		w(String.format("\t{ 'C', \"-.-.\" },"));
-		w(String.format("\t{ 'D', \"-..\" },"));
-		w(String.format("\t{ 'E', \".\" },"));
-		w(String.format("\t{ 'F', \"..-.\" },"));
-		w(String.format("\t{ 'G', \"--.\" },"));
-		w(String.format("\t{ 'H', \"....\" },"));
-		w(String.format("\t{ 'I', \"..\" },"));
-		w(String.format("\t{ 'J', \".---\" },"));
-		w(String.format("\t{ 'K', \".-.-\" },"));
-		w(String.format("\t{ 'L', \".-..\" },"));
-		w(String.format("\t{ 'M', \"--\" },"));
-		w(String.format("\t{ 'N', \"-.\" },"));
-		w(String.format("\t{ 'O', \"---\" },"));
-		w(String.format("\t{ 'P', \".--.\" },"));
-		w(String.format("\t{ 'Q', \"--.-\" },"));
-		w(String.format("\t{ 'R', \".-.\" },"));
-		w(String.format("\t{ 'S', \"...\" },"));
-		w(String.format("\t{ 'T', \"-\" },"));
-		w(String.format("\t{ 'U', \"..-\" },"));
-		w(String.format("\t{ 'V', \"...-\" },"));
-		w(String.format("\t{ 'W', \".--\" },"));
-		w(String.format("\t{ 'X', \"-..-\" },"));
-		w(String.format("\t{ 'Y', \"-.--\" },"));
-		w(String.format("\t{ 'Z', \"--..\" },"));
+		w(String.format("\t{ 'A', \".-+\" },"));
+		w(String.format("\t{ 'B', \"-...+\" },"));
+		w(String.format("\t{ 'C', \"-.-.+\" },"));
+		w(String.format("\t{ 'D', \"-..+\" },"));
+		w(String.format("\t{ 'E', \".+\" },"));
+		w(String.format("\t{ 'F', \"..-.+\" },"));
+		w(String.format("\t{ 'G', \"--.+\" },"));
+		w(String.format("\t{ 'H', \"....+\" },"));
+		w(String.format("\t{ 'I', \"..+\" },"));
+		w(String.format("\t{ 'J', \".---+\" },"));
+		w(String.format("\t{ 'K', \".-.-+\" },"));
+		w(String.format("\t{ 'L', \".-..+\" },"));
+		w(String.format("\t{ 'M', \"--+\" },"));
+		w(String.format("\t{ 'N', \"-.+\" },"));
+		w(String.format("\t{ 'O', \"---+\" },"));
+		w(String.format("\t{ 'P', \".--.+\" },"));
+		w(String.format("\t{ 'Q', \"--.-+\" },"));
+		w(String.format("\t{ 'R', \".-.+\" },"));
+		w(String.format("\t{ 'S', \"...+\" },"));
+		w(String.format("\t{ 'T', \"-+\" },"));
+		w(String.format("\t{ 'U', \"..-+\" },"));
+		w(String.format("\t{ 'V', \"...-+\" },"));
+		w(String.format("\t{ 'W', \".--+\" },"));
+		w(String.format("\t{ 'X', \"-..-+\" },"));
+		w(String.format("\t{ 'Y', \"-.--+\" },"));
+		w(String.format("\t{ 'Z', \"--..+\" },"));
 		w(String.format("\t{ ' ', \"     \" },"));
-		w(String.format("\t{ '1', \".----\" },"));
-		w(String.format("\t{ '2', \"..---\" },"));
-		w(String.format("\t{ '3', \"...--\" },"));
-		w(String.format("\t{ '4', \"....-\" },"));
-		w(String.format("\t{ '5', \".....\" },"));
-		w(String.format("\t{ '6', \"-....\" },"));
-		w(String.format("\t{ '7', \"--...\" },"));
-		w(String.format("\t{ '8', \"---..\" },"));
-		w(String.format("\t{ '9', \"----.\" },"));
-		w(String.format("\t{ '0', \"-----\" }"));
+		w(String.format("\t{ '1', \".----+\" },"));
+		w(String.format("\t{ '2', \"..---+\" },"));
+		w(String.format("\t{ '3', \"...--+\" },"));
+		w(String.format("\t{ '4', \"....-+\" },"));
+		w(String.format("\t{ '5', \".....+\" },"));
+		w(String.format("\t{ '6', \"-....+\" },"));
+		w(String.format("\t{ '7', \"--...+\" },"));
+		w(String.format("\t{ '8', \"---..+\" },"));
+		w(String.format("\t{ '9', \"----.+\" },"));
+		w(String.format("\t{ '0', \"-----+\" }"));
 		w(String.format("};"));
 	}
 
