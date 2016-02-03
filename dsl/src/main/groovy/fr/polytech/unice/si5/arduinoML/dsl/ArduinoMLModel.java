@@ -77,12 +77,14 @@ public class ArduinoMLModel {
         this.binding.setVariable(name.toUpperCase(), actuator);
     }
 
-    public void createState(String name, List<Action> actions){
+    public State createState(String name, List<Action> actions){
         State state = new State();
         state.setName(name);
 
         this.states.add(state);
         this.binding.setVariable(name.toUpperCase(), state);
+
+        return state;
     }
 
     public void createInitial(State init){
