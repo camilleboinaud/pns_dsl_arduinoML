@@ -103,7 +103,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 	@Override
 	public void visit(Transition transition) {
 		if(transition.getExpression() == null) {
-
+			w(String.format("  state_%s();",  transition.getNext().getName()));
 		} else {
 			w(String.format("  if(("));
 			transition.getExpression().accept(this);
