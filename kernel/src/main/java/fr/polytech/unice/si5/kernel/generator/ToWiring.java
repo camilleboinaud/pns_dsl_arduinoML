@@ -1,7 +1,6 @@
 package fr.polytech.unice.si5.kernel.generator;
 
 
-import fr.polytech.unice.si5.kernel.Morse;
 import fr.polytech.unice.si5.kernel.App;
 import fr.polytech.unice.si5.kernel.behavioral.*;
 import fr.polytech.unice.si5.kernel.structural.*;
@@ -12,6 +11,7 @@ import fr.polytech.unice.si5.kernel.structural.*;
 public class ToWiring extends Visitor<StringBuffer> {
 
 	private final static String CURRENT_STATE = "current_state";
+	public final static int UNITY_LENGTH = 300;
 
 	public ToWiring() {
 		this.result = new StringBuffer();
@@ -38,20 +38,8 @@ public class ToWiring extends Visitor<StringBuffer> {
 			state.accept(this);
 		}
 
-
-		if(app.isMorseEnable()) {
-			mappingMorseCode();
-			encodingMorseCode();
-			// Write morse code
-			w("void loop() {");
-			w(String.format("\tint UNIT_LENGTH = 300;"));
-			w(String.format("\tString morseWord = encode(\"%s\");", app.getMorseCode()));
-			generateMorseArduinoLoop(app);
-
-		} else {
-			w("void loop() {");
-			w(String.format("  state_%s();", app.getInitial().getName()));
-		}
+		w("void loop() {");
+		w(String.format("  state_%s();", app.getInitial().getName()));
 		w("}");
 	}
 
@@ -132,7 +120,12 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(DigitalAction action) {
-		w(String.format("  digitalWrite(%d,%s);",action.getActuator().getPin(), action.getValue()));
+		MORSESIGNAL morse = action.getMorse();
+		if( morse != null) {
+			generateMorseArduino(morse, action.getActuator().getPin());
+		} else {
+			w(String.format("  digitalWrite(%d,%s);",action.getActuator().getPin(), action.getValue()));
+		}
 	}
 
 	@Override
@@ -140,105 +133,30 @@ public class ToWiring extends Visitor<StringBuffer> {
 		w(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), (int) action.getValue()));
 	}
 
-	@Override
-	public void visit(Morse morse){
-		w(String.format("%s",morse.getCode().getContent()));
+	private void generateMorseArduino(MORSESIGNAL morse, int pin) {
+		switch(morse) {
+			case SHORT:
+				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
+				w(String.format("  delay(%d);", UNITY_LENGTH));
+				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
+				w(String.format("  delay(%d);", UNITY_LENGTH));
+				break;
+			case LONG:
+				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
+				w(String.format("  delay(%d);", UNITY_LENGTH * 3));
+				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
+				w(String.format("  delay(%d);", UNITY_LENGTH));
+				break;
+			case STOP:
+				w(String.format("  delay(%d);", UNITY_LENGTH));
+				break;
+			case ESPACE:
+				w(String.format("  delay(%d);", UNITY_LENGTH));
+				break;
+			case END:
+				w(String.format("  delay(%d);", UNITY_LENGTH * 10));
+				break;
 
-	}
-	private void generateMorseArduinoLoop(App app) {
-		w(String.format("\n\tfor(int i=0; i<=morseWord.length(); i++) {"));
-		w(String.format("\t\tswitch(morseWord[i]) {"));
-		w(String.format("\t\t\tcase '.' : //dot"));
-		writeDigtalOutputs(app, SIGNAL.HIGH);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
-		writeDigtalOutputs(app, SIGNAL.LOW);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
-		w(String.format("\t\t\t\tbreak;\n"));
-		w(String.format("\t\t\tcase '-': //dash"));
-		writeDigtalOutputs(app, SIGNAL.HIGH);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH * 3);"));
-		writeDigtalOutputs(app, SIGNAL.LOW);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
-		w(String.format("\t\t\t\tbreak;\n"));
-		w(String.format("\t\t\tcase '+': //Finish a letter"));
-		writeDigtalOutputs(app, SIGNAL.LOW);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
-		w(String.format("\t\t\t\tbreak;\n"));
-		w(String.format("\t\t\tcase ' ' :"));
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH);"));
-		w(String.format("\t\t}"));
-		w(String.format("\t}"));
-		w(String.format("\t//The repetion of the morse code"));
-		writeDigtalOutputs(app, SIGNAL.LOW);
-		w(String.format("\t\t\t\tdelay(UNIT_LENGTH * 10);"));
-	}
-
-	private void writeDigtalOutputs(App app, SIGNAL signal) {
-		for(Brick brick : app.getBricks()) {
-			if(brick instanceof DigitalActuator) { // Output pins
-				w(String.format("\t\t\t\tdigitalWrite(%d,%s);", brick.getPin() , signal.name()));
-			}
 		}
-	}
-	private void mappingMorseCode() {
-		w(String.format("\n//Build a struct with the morse code mapping"));
-		w(String.format("static const struct {"));
-		w(String.format("\tconst char letter, *code;"));
-		w(String.format("} MorseMap[] = {"));
-		w(String.format("\t{ 'A', \".-+\" },"));
-		w(String.format("\t{ 'B', \"-...+\" },"));
-		w(String.format("\t{ 'C', \"-.-.+\" },"));
-		w(String.format("\t{ 'D', \"-..+\" },"));
-		w(String.format("\t{ 'E', \".+\" },"));
-		w(String.format("\t{ 'F', \"..-.+\" },"));
-		w(String.format("\t{ 'G', \"--.+\" },"));
-		w(String.format("\t{ 'H', \"....+\" },"));
-		w(String.format("\t{ 'I', \"..+\" },"));
-		w(String.format("\t{ 'J', \".---+\" },"));
-		w(String.format("\t{ 'K', \".-.-+\" },"));
-		w(String.format("\t{ 'L', \".-..+\" },"));
-		w(String.format("\t{ 'M', \"--+\" },"));
-		w(String.format("\t{ 'N', \"-.+\" },"));
-		w(String.format("\t{ 'O', \"---+\" },"));
-		w(String.format("\t{ 'P', \".--.+\" },"));
-		w(String.format("\t{ 'Q', \"--.-+\" },"));
-		w(String.format("\t{ 'R', \".-.+\" },"));
-		w(String.format("\t{ 'S', \"...+\" },"));
-		w(String.format("\t{ 'T', \"-+\" },"));
-		w(String.format("\t{ 'U', \"..-+\" },"));
-		w(String.format("\t{ 'V', \"...-+\" },"));
-		w(String.format("\t{ 'W', \".--+\" },"));
-		w(String.format("\t{ 'X', \"-..-+\" },"));
-		w(String.format("\t{ 'Y', \"-.--+\" },"));
-		w(String.format("\t{ 'Z', \"--..+\" },"));
-		w(String.format("\t{ ' ', \"     \" },"));
-		w(String.format("\t{ '1', \".----+\" },"));
-		w(String.format("\t{ '2', \"..---+\" },"));
-		w(String.format("\t{ '3', \"...--+\" },"));
-		w(String.format("\t{ '4', \"....-+\" },"));
-		w(String.format("\t{ '5', \".....+\" },"));
-		w(String.format("\t{ '6', \"-....+\" },"));
-		w(String.format("\t{ '7', \"--...+\" },"));
-		w(String.format("\t{ '8', \"---..+\" },"));
-		w(String.format("\t{ '9', \"----.+\" },"));
-		w(String.format("\t{ '0', \"-----+\" }"));
-		w(String.format("};"));
-	}
-
-	private void encodingMorseCode() {
-		w(String.format("\nString encode(const char *src) {"));
-		w(String.format("\tsize_t i, j;"));
-		w(String.format("\tString morseWord = \"\";\n"));
-		w(String.format("\tfor( i = 0; src[i]; ++i ) {"));
-		w(String.format("\t\tfor( j = 0; j < sizeof MorseMap / sizeof *MorseMap; ++j ) {"));
-		w(String.format("\t\t\tif( toupper(src[i]) == MorseMap[j].letter ) {"));
-		w(String.format("\t\t\t\tmorseWord += MorseMap[j].code;"));
-		w(String.format("\t\t\t\tbreak;"));
-		w(String.format("\t\t\t}"));
-		w(String.format("\t\t}"));
-		w(String.format("\t\tmorseWord += \" \";"));
-		w(String.format("\t}\n"));
-		w(String.format("\treturn morseWord;"));
-		w(String.format("}\n"));
 	}
 }

@@ -1,7 +1,6 @@
 package fr.polytech.unice.si5.kernel.generator;
 
 import fr.polytech.unice.si5.kernel.App;
-import fr.polytech.unice.si5.kernel.Morse;
 import fr.polytech.unice.si5.kernel.behavioral.*;
 import fr.polytech.unice.si5.kernel.structural.AnalogicalActuator;
 import fr.polytech.unice.si5.kernel.structural.AnalogicalSensor;
@@ -33,7 +32,6 @@ public abstract class Visitor<T> {
 	public abstract void visit(AnalogicalCondition analogicalCondition);
 
 	public abstract void visit(Transition transition);
-	public abstract void visit(Morse morse);
 
 
 	/***********************
