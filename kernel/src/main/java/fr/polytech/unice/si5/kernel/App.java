@@ -15,8 +15,6 @@ public class App implements NamedElement, Visitable {
     private List<Brick> bricks = new ArrayList<Brick>();
     private List<State> states = new ArrayList<State>();
     private State initial;
-    private boolean morseEnable = false;
-    private String morseCode = null;
 
     @Override
     public String getName() {
@@ -42,22 +40,6 @@ public class App implements NamedElement, Visitable {
 
     public void setStates(List<State> states) {
         this.states = states;
-    }
-
-    public boolean isMorseEnable() {
-        return morseEnable;
-    }
-
-    public void setMorseEnable(boolean morseEnable) {
-        this.morseEnable = morseEnable;
-    }
-
-    public String getMorseCode() {
-        return morseCode;
-    }
-
-    public void setMorseCode(String morseCode) {
-        this.morseCode = morseCode;
     }
 
     public State getInitial() {

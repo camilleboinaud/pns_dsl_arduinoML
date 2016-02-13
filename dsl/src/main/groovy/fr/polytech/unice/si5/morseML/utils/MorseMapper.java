@@ -1,5 +1,7 @@
 package fr.polytech.unice.si5.morseML.utils;
 
+import fr.polytech.unice.si5.kernel.structural.MORSESIGNAL;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +45,7 @@ public class MorseMapper {
         mappers.put("8", "---..+");
         mappers.put("9", "----.+");
         mappers.put(" ", "     ");
+
     }
     public static String getMosreMapper(String letter) {
         return mappers.get(letter);

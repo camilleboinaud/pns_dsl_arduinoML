@@ -1,14 +1,12 @@
 package fr.polytech.unice.si5.morseML.dsl;
 
 import fr.polytech.unice.si5.kernel.App;
-import fr.polytech.unice.si5.kernel.behavioral.Action;
-import fr.polytech.unice.si5.kernel.behavioral.Expression;
-import fr.polytech.unice.si5.kernel.behavioral.State;
-import fr.polytech.unice.si5.kernel.behavioral.Transition;
+import fr.polytech.unice.si5.kernel.behavioral.*;
 import fr.polytech.unice.si5.kernel.generator.ToWiring;
 import fr.polytech.unice.si5.kernel.generator.Visitor;
 import fr.polytech.unice.si5.kernel.structural.*;
 import fr.polytech.unice.si5.morseML.utils.MorseMapper;
+import fr.polytech.unice.si5.morseML.utils.MorseSignalMapper;
 import groovy.lang.Binding;
 
 import java.util.ArrayList;
@@ -24,7 +22,6 @@ public class ArduinoMLModel {
 
     protected Binding binding;
 
-
     public ArduinoMLModel(Binding binding){
         this.binding = binding;
     }
@@ -33,27 +30,42 @@ public class ArduinoMLModel {
         DigitalActuator actuator = new DigitalActuator();
         actuator.setName(name);
         actuator.setPin(pin);
-        this.bricks.add(actuator);
+        if(this.bricks.size()> 0) {
+            this.bricks.set(0, actuator); // autorise only a digital actuator for the morse code
+        } else {
+            this.bricks.add(actuator);
+        }
         this.binding.setVariable(name, actuator);
-        System.out.println("name :" + name + " , pin : " + pin);
     }
     public void createMorse(String name) {
-        List<Character> characters = new ArrayList<>();
+        List<String> signals = new ArrayList<>();
         for(String s : name.split("")) {
-            char[] chars = MorseMapper.getMosreMapper(s).toCharArray();
-            for(char c : chars) {
-                characters.add(new Character(c));
+            String[] morseMapper = MorseMapper.getMosreMapper(s.toUpperCase()).split("");
+            for(String mapper : morseMapper) {
+                signals.add(mapper);
             }
         }
         // Add all the states
-        IntStream.range(0, characters.size())
+        IntStream.range(0, signals.size())
                     .forEach(index -> {
                         State state = new State();
                         state.setName("state" + index);
+                        DigitalAction action = new DigitalAction();
+                        action.setMorse(MorseSignalMapper.getMoserSignal(signals.get(index)));
+                        action.setActuator((DigitalActuator) bricks.get(0));
+                        List<Action> actions = new ArrayList<>();
+                        actions.add(action);
+                        state.setActions(actions);
                         this.states.add(state);
                     });
         State endState = new State();
         endState.setName("end");
+        DigitalAction endAction = new DigitalAction();
+        endAction.setMorse(MorseSignalMapper.getMoserSignal("|"));
+        endAction.setActuator((DigitalActuator) bricks.get(0));
+        List<Action> endActions = new ArrayList<>();
+        endActions.add(endAction);
+        endState.setActions(endActions);
         this.states.add(endState);
 
         // Set the transitions into the state
@@ -74,93 +86,6 @@ public class ArduinoMLModel {
         this.initial = states.get(0);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    public void createAnalogicalSensor(String name, int pin){
-        AnalogicalSensor sensor = new AnalogicalSensor();
-        sensor.setName(name);
-        sensor.setPin(pin);
-        this.bricks.add(sensor);
-        this.binding.setVariable(name.toUpperCase(), sensor);
-
-    }
-
-    public void createDigitalSensor(String name, int pin){
-        DigitalSensor sensor = new DigitalSensor();
-        sensor.setName(name);
-        sensor.setPin(pin);
-        this.bricks.add(sensor);
-        this.binding.setVariable(name.toUpperCase(), sensor);
-    }
-
-    public void createAnalogicalActuator(String name, int pin){
-        AnalogicalActuator actuator = new AnalogicalActuator();
-        actuator.setName(name);
-        actuator.setPin(pin);
-        this.bricks.add(actuator);
-        this.binding.setVariable(name.toUpperCase(), actuator);
-    }
-
-
-    public void createDigitalActuator(String name, int pin){
-        DigitalActuator actuator = new DigitalActuator();
-        actuator.setName(name);
-        actuator.setPin(pin);
-        this.bricks.add(actuator);
-        this.binding.setVariable(name.toUpperCase(), actuator);
-    }
-
-    public State createState(String name, List<Action> actions){
-        State state = new State();
-        state.setName(name);
-        this.states.add(state);
-        this.binding.setVariable(name.toUpperCase(), state);
-        return state;
-    }
-
-    public void createInitial(State init){
-        this.initial = init;
-    }
-
-    public void createTransition(State from, State to, Expression expression){
-        Transition transition = new Transition();
-        transition.setNext(to);
-        transition.setExpression(expression);
-        from.setTransition(transition);
-    }
-
     public Object generate(String name){
         App app = new App();
         app.setName(name);
@@ -169,11 +94,6 @@ public class ArduinoMLModel {
         app.setInitial(initial);
         Visitor visitor = new ToWiring();
         app.accept(visitor);
-
         return visitor.getResult();
     }
-
-
-
-
 }
