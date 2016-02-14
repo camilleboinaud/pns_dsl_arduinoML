@@ -1,6 +1,7 @@
-package main.groovy.fr.polytech.unice.si5.konamiML.main;
+package fr.polytech.unice.si5.konamiML.main;
 
-import main.groovy.fr.polytech.unice.si5.konamiML.dsl.KonamiMLDSL;
+
+import fr.polytech.unice.si5.konamiML.dsl.KonamiMLDSL;
 
 import java.io.File;
 

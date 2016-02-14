@@ -15,4 +15,4 @@ initial state : OFF
 change from: OFF, to: ON when TEMPERATURE became greater_than value 20 using degrees or TEMPERATURE became lower_than value 10 using degrees
 change from: ON, to: OFF when TEMPERATURE became lower_than value 20 using degrees and TEMPERATURE became lower_than value 30 using degrees
 
-generate("Temperature");
+generate "Temperature";

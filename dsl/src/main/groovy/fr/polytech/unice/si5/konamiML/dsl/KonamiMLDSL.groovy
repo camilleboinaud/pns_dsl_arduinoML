@@ -1,6 +1,7 @@
-package main.groovy.fr.polytech.unice.si5.konamiML.dsl
+package fr.polytech.unice.si5.konamiML.dsl
 
 import org.codehaus.groovy.control.CompilerConfiguration
+
 
 /**
  * Created by user on 14/02/16.

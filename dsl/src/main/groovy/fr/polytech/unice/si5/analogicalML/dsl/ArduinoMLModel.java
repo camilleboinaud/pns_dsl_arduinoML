@@ -95,19 +95,17 @@ public class ArduinoMLModel {
         from.setTransition(transition);
     }
 
-   /* public Object generate(String name){
+    public Object generate(String name){
         App app = new App();
         app.setName(name);
         app.setBricks(bricks);
         app.setStates(states);
         app.setInitial(initial);
-        app.setMorseCode(this.morseCode);
-        app.setMorseEnable(this.morseEnable);
         Visitor visitor = new ToWiring();
         app.accept(visitor);
 
         return visitor.getResult();
-    }*/
+    }
 
 
 

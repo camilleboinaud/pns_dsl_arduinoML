@@ -1,4 +1,4 @@
-package main.groovy.fr.polytech.unice.si5.konamiML.dsl
+package fr.polytech.unice.si5.konamiML.dsl
 
 /**
  * Created by user on 09/02/16.
