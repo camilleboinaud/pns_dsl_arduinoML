@@ -7,7 +7,6 @@ class KonamiMLBasescript {
 
     // digital actuator "name" pin n
    // def digital{
-        //this.getBinding().getModel().created
        // [pin: { n -> (this.getBinding()).getModel().createActuator(name, n) }]
     //}
 }

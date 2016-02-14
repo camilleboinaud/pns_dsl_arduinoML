@@ -95,7 +95,7 @@ public class ArduinoMLModel {
         from.setTransition(transition);
     }
 
-    public Object generate(String name){
+   /* public Object generate(String name){
         App app = new App();
         app.setName(name);
         app.setBricks(bricks);
@@ -107,7 +107,7 @@ public class ArduinoMLModel {
         app.accept(visitor);
 
         return visitor.getResult();
-    }
+    }*/
 
 
 
