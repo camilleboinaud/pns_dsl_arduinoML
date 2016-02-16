@@ -23,65 +23,87 @@ public class KonamiMLModel {
 
     protected Binding binding;
 
+    private AnalogicalSensor xAxis;
+    private AnalogicalSensor yAxis;
+    private DigitalSensor button;
+    private DigitalActuator redled;
+    private DigitalActuator greenled;
+    private DigitalActuator buzzer;
 
     public KonamiMLModel(Binding binding){
         this.binding = binding;
     }
 
 
-    public void createDigitalSensor(String name, int pin){
-        DigitalSensor dSensor = new DigitalSensor();
-        dSensor.setName(name);
-        dSensor.setPin(pin);
-        this.bricks.add(dSensor);
+    public  void createXAxis(String name, int pin){
+        xAxis = new AnalogicalSensor();
+        xAxis.setName(name);
+        xAxis.setPin(pin);
+        this.bricks.add(xAxis);
     }
 
-    public void createDigitalActuator(String name, int pin) {
-        DigitalActuator digActuator = new DigitalActuator();
-        digActuator.setName(name);
-        digActuator.setPin(pin);
-        this.bricks.add(digActuator);
+    public  void createYAxis(String name, int pin){
+        yAxis = new AnalogicalSensor();
+        yAxis.setName(name);
+        yAxis.setPin(pin);
+        this.bricks.add(yAxis);
     }
 
-    public void createAnalogicalSensor(String name, int pin){
-        AnalogicalSensor aSensor = new AnalogicalSensor();
-        aSensor.setName(name);
-        aSensor.setPin(pin);
-        this.bricks.add(aSensor);
+
+    public void createButton(String name, int pin){
+         button = new DigitalSensor();
+        button.setName(name);
+        button.setPin(pin);
+        this.bricks.add(button);
     }
 
-    public void createAnalogicalActuator(String name, int pin){
-        AnalogicalActuator anaActuator = new  AnalogicalActuator();
-        anaActuator.setName(name);
-        anaActuator.setPin(pin);
-        this.bricks.add(anaActuator);
+    public void createRedLed(String name,int pin){
+        redled = new DigitalActuator();
+        redled.setName(name);
+        redled.setPin(pin);
+        this.bricks.add(redled);
     }
+
+    public void createGreenLed(String name,int pin){
+        greenled = new DigitalActuator();
+        greenled.setName(name);
+        greenled.setPin(pin);
+        this.bricks.add(greenled);
+    }
+
+    public void createBuzzer(String name,int pin){
+        buzzer = new DigitalActuator();
+        buzzer.setName(name);
+        buzzer.setPin(pin);
+        this.bricks.add(buzzer);
+    }
+
 
     public void createKonami(String konamicode){
 
 
         DigitalAction redledlow = new DigitalAction();
-        redledlow.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
+        redledlow.setActuator(redled);// first digital actuator => led led
         redledlow.setValue(SIGNAL.LOW);
 
         DigitalAction redledhigh = new DigitalAction();
-        redledhigh.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
+        redledhigh.setActuator(redled);  // first digital actuator => led led
         redledhigh.setValue(SIGNAL.HIGH);
 
         DigitalAction greenledhlow = new DigitalAction(); // second digital actuator => green led
-        greenledhlow.setActuator((DigitalActuator) this.bricks.get(4));
+        greenledhlow.setActuator(greenled);
         greenledhlow.setValue(SIGNAL.LOW);
 
         DigitalAction greenledhigh = new DigitalAction(); // second digital actuator => green led
-        greenledhigh.setActuator((DigitalActuator) this.bricks.get(4));
+        greenledhigh.setActuator(greenled);
         greenledhigh.setValue(SIGNAL.HIGH);
 
         DigitalAction buzzerlow = new DigitalAction(); //third digital actuator => buzzer
-        buzzerlow.setActuator((DigitalActuator) this.bricks.get(5));
+        buzzerlow.setActuator(buzzer);
         buzzerlow.setValue(SIGNAL.LOW);
 
         DigitalAction buzzerhigh = new DigitalAction(); //third digital actuator => buzzer
-        buzzerhigh.setActuator((DigitalActuator) this.bricks.get(5));
+        buzzerhigh.setActuator(buzzer);
         buzzerhigh.setValue(SIGNAL.HIGH);
 
         //create a success state
@@ -102,7 +124,7 @@ public class KonamiMLModel {
         error.setName("error");
         List<Action> actionError = new ArrayList<Action>();
         DigitalAction redledOfStateErr = new DigitalAction();
-        redledOfStateErr.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
+        redledOfStateErr.setActuator(redled);// first digital actuator => led led
         redledOfStateErr.setValue(SIGNAL.LOW);
         actionError.add(redledOfStateErr);
 
@@ -139,23 +161,10 @@ public class KonamiMLModel {
             State state1 = new State();
             state1.setName("state" + index*2);
             List<Action> actions = new ArrayList<Action>();
-            DigitalAction digAc = new DigitalAction();
-            digAc.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
-            digAc.setValue(SIGNAL.HIGH);
-            actions.add(digAc);
-            DigitalAction digAc2 = new DigitalAction(); // second digital actuator => green led
-            digAc2.setActuator((DigitalActuator) this.bricks.get(4));
-            digAc2.setValue(SIGNAL.LOW);
-            actions.add(digAc2);
-            DigitalAction digAc3 = new DigitalAction(); //third digital actuator => buzzer
-            digAc3.setActuator((DigitalActuator) this.bricks.get(5));
-            digAc3.setValue(SIGNAL.LOW);
-            actions.add(digAc3);
+            actions.add(redledhigh);
+            actions.add(greenledhlow);
+            actions.add(buzzerlow);
             Transition transition = new Transition();
-           // AnalogicalAction analogicalAction = new AnalogicalAction();
-            //analogicalAction.setDirection(KonamiMapper.getDirection(code.get(index).toUpperCase()));
-            //actions.add(analogicalAction);
-            state1.setActions(actions);
             this.states.add(state1);
             if(index < code.size()) {
                 State state2 = new State();
