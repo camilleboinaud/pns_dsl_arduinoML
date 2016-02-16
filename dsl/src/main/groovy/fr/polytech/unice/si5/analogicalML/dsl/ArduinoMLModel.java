@@ -80,12 +80,9 @@ public class ArduinoMLModel {
         this.initial = init;
     }
 
-    public void createTransition(State from, State to, Expression expression){
-        Transition transition = new Transition();
+    public void addTransition(State from, State to,Transition transition){
         transition.setNext(to);
-        transition.setExpression(expression);
-
-        from.setTransition(transition);
+        from.getTransition().add(transition);
     }
 
     public Object generate(String name){

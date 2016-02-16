@@ -10,7 +10,6 @@ import fr.polytech.unice.si5.kernel.structural.*;
  */
 public class ToWiring extends Visitor<StringBuffer> {
 
-	private final static String CURRENT_STATE = "current_state";
 	public final static int UNITY_LENGTH = 300;
 
 	public ToWiring() {
@@ -104,8 +103,6 @@ public class ToWiring extends Visitor<StringBuffer> {
 			wn("    time = millis();");
 
 			wn(String.format("    state_%s();", transition.getNext().getName()));
-			wn("  } else {");
-			wn(String.format("    state_%s();", ((State) context.get(CURRENT_STATE)).getName()));
 			wn("  }");
 		}
 	}
@@ -117,8 +114,19 @@ public class ToWiring extends Visitor<StringBuffer> {
 			action.accept(this);
 		}
 		wn("  boolean guard = millis() - time > debounce;");
-		context.put(CURRENT_STATE, state);
-		state.getTransition().accept(this);
+		if(!state.getTransition().isEmpty()) {
+			state.getTransition().get(0).accept(this);
+
+			for (int i = 1; i < state.getTransition().size(); i++) {
+				w("  else ");
+				state.getTransition().get(i).accept(this);
+			}
+			wn("  else {");
+			wn(String.format("    state_%s();", state.getName()));
+			wn("  }");
+		} else { // warning, entering in this condition will probably generate an infinite loop...
+			wn(String.format("  state_%s();", state.getName()));
+		}
 		wn("}\n");
 	}
 
