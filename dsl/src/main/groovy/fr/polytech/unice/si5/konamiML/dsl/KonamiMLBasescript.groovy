@@ -5,25 +5,34 @@ package fr.polytech.unice.si5.konamiML.dsl
  */
 abstract class KonamiMLBasescript extends Script{
 
-    // anaSensor "Xaxis" pin 2
-    def anaSensor(String name){
-        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createAnalogicalSensor(name, n)}]
+    def xAxis(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createXAxis(name, n)}]
     }
 
-    def digActuator(String name){
-        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createDigitalActuator(name, n)}]
+    def yAxis(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createYAxis(name, n)}]
     }
 
-    def digSensor(String name){
-        [pin : {n -> ((KonamiMLBinding)this.getBinding()).getModel().createDigitalSensor(name,n)}]
+    def button(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createButton(name, n)}]
+    }
+
+    def redLed(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createRedLed(name, n)}]
+    }
+
+    def greenLed(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createGreenLed(name, n)}]
+
+    }
+
+    def buzzer(String name){
+        [pin : { n -> ((KonamiMLBinding)this.getBinding()).getModel().createBuzzer(name, n)}]
     }
 
     def konami(String konamicode){
         ((KonamiMLBinding)this.getBinding()).getModel().createKonami(konamicode)
     }
-    // def digital{
-       // [pin: { n -> (this.getBinding()).getModel().createActuator(name, n) }]
-    //}
 
     // generate name
     def generate(String name) {
