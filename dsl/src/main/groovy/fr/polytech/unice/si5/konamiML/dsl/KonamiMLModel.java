@@ -129,7 +129,7 @@ public class KonamiMLModel {
         actionError.add(redledOfStateErr);
 
 
-        //create state fin
+        //create state fin buzzer is on
         State fin = new State();
         fin.setName("fin");
         List<Action> actionFin = new ArrayList<Action>();
@@ -160,11 +160,15 @@ public class KonamiMLModel {
         IntStream.range(0, code.size()).forEach(index -> {
             State state1 = new State();
             state1.setName("state" + index*2);
-            List<Action> actions = new ArrayList<Action>();
-            actions.add(redledhigh);
-            actions.add(greenledhlow);
-            actions.add(buzzerlow);
+            if(index == 0){
+                List<Action> actions = new ArrayList<Action>();
+                actions.add(redledhigh);
+                actions.add(greenledhlow);
+                actions.add(buzzerlow);
+                state1.setActions(actions);
+            }
             Transition transition = new Transition();
+
             this.states.add(state1);
             if(index < code.size()) {
                 State state2 = new State();
