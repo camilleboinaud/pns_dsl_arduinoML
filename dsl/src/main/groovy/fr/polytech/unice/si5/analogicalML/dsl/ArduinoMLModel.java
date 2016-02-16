@@ -25,9 +25,6 @@ public class ArduinoMLModel {
 
     protected Binding binding;
 
-    private boolean morseEnable = false;
-    private String morseCode = null;
-
     public ArduinoMLModel(Binding binding){
         this.binding = binding;
     }
@@ -59,10 +56,6 @@ public class ArduinoMLModel {
         this.bricks.add(actuator);
         this.binding.setVariable(name.toUpperCase(), actuator);
     }
-    public void createMorse(String name) {
-        this.morseEnable = true;
-        this.morseCode = name;
-    }
 
     public void createDigitalActuator(String name, int pin){
         DigitalActuator actuator = new DigitalActuator();
@@ -87,12 +80,9 @@ public class ArduinoMLModel {
         this.initial = init;
     }
 
-    public void createTransition(State from, State to, Expression expression){
-        Transition transition = new Transition();
+    public void addTransition(State from, State to,Transition transition){
         transition.setNext(to);
-        transition.setExpression(expression);
-
-        from.setTransition(transition);
+        from.getTransition().add(transition);
     }
 
     public Object generate(String name){

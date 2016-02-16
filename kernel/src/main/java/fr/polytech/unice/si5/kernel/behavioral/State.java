@@ -11,8 +11,8 @@ import java.util.List;
 public class State implements NamedElement, Visitable {
 
 	private String name;
-	private List<Action> actions = new ArrayList<Action>();
-	private Transition transition;
+	private List<Action> actions = new ArrayList<>();
+	private List<Transition> transition = new ArrayList<>();
 
 	@Override
 	public String getName() {
@@ -32,11 +32,11 @@ public class State implements NamedElement, Visitable {
 		this.actions = actions;
 	}
 
-	public Transition getTransition() {
+	public List<Transition> getTransition() {
 		return transition;
 	}
 
-	public void setTransition(Transition transition) {
+	public void setTransition(List<Transition> transition) {
 		this.transition = transition;
 	}
 

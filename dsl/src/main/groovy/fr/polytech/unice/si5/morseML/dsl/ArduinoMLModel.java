@@ -79,7 +79,7 @@ public class ArduinoMLModel {
                         to = states.get(index + 1);
                     }
                     transition.setNext(to);
-                    states.get(index).setTransition(transition);
+                    states.get(index).getTransition().add(transition);
                 });
 
         // Set the initial State

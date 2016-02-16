@@ -6,6 +6,7 @@ import fr.polytech.unice.si5.kernel.behavioral.Condition
 import fr.polytech.unice.si5.kernel.behavioral.DigitalAction
 import fr.polytech.unice.si5.kernel.behavioral.OPERATOR
 import fr.polytech.unice.si5.kernel.behavioral.SimpleExpression
+import fr.polytech.unice.si5.kernel.behavioral.Transition
 import fr.polytech.unice.si5.kernel.structural.AnalogicalSensor
 import fr.polytech.unice.si5.kernel.structural.DigitalActuator
 import fr.polytech.unice.si5.kernel.structural.DigitalSensor
@@ -62,62 +63,74 @@ abstract class ArduinoMLBasescript extends Script{
         [means: closure]
     }
 
-    def change(Map map){
-        if(map.from != null && map.to != null){
+    def from(State first){
 
-            Expression expression = new SimpleExpression();
-            ((ArduinoMLBinding) this.getBinding()).getModel().createTransition(map.from, map.to, expression)
+        Transition transition = new Transition();
 
-            def closure
+        def closure
 
-            closure = { sensor ->
-                [became: { field ->
-                    if (field instanceof SIGNAL) {
-                        addExpressionToTransition(map.from, digCondition(sensor, (SIGNAL) field))
-                        [and : {
-                            moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
-                            closure
-                        }, or: {
-                            moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
-                            closure
-                        }]
-                    } else {
-                        [value: { value ->
-                            [using: { unit ->
-                                addExpressionToTransition(map.from, anaCondition(sensor, (OPERATOR) field, value, unit))
-                                [and : { newSensor ->
-                                    moveToAddExpressionToTransition(map.from, BOOLEAN.AND)
-                                    closure(newSensor)
-                                }, or: { newSensor ->
-                                    moveToAddExpressionToTransition(map.from, BOOLEAN.OR)
-                                    closure(newSensor)
-                                }]
+        closure = { sensor ->
+            [became: { field ->
+                if (field instanceof SIGNAL) {
+                    addExpressionToTransition(first, transition, digCondition(sensor, (SIGNAL) field))
+                    [and : {
+                        moveToAddExpressionToTransition(first, transition, BOOLEAN.AND)
+                        closure
+                    }, or: {
+                        moveToAddExpressionToTransition(first, transition, BOOLEAN.OR)
+                        closure
+                    }]
+                } else {
+                    [value: { value ->
+                        [using: { unit ->
+                            addExpressionToTransition(first, transition, anaCondition(sensor, (OPERATOR) field, value, unit))
+                            [and : { newSensor ->
+                                moveToAddExpressionToTransition(first, transition, BOOLEAN.AND)
+                                closure(newSensor)
+                            }, or: { newSensor ->
+                                moveToAddExpressionToTransition(first, transition, BOOLEAN.OR)
+                                closure(newSensor)
                             }]
                         }]
-                    }
-                }]
-            }
-            [when: closure]
+                    }]
+                }
+            }]
         }
+
+        [to: { second ->
+
+            transition.next = second
+            transition.expression = new SimpleExpression();
+            first.transition.add(transition)
+
+            [when: closure]
+        }]
+
     }
 
-    def moveToAddExpressionToTransition(State state, BOOLEAN booleanOp){
+    def moveToAddExpressionToTransition(State state, Transition transition, BOOLEAN booleanOp){
+        state.getTransition().remove(transition)
         BooleanExpression tmp = new BooleanExpression()
-        tmp.left = state.transition.expression
+        tmp.left = transition.expression
         tmp.booleanOperator = booleanOp
 
-        state.transition.expression = tmp
+        transition.expression = tmp
+        state.getTransition().add(transition)
+        transition
     }
 
-    def addExpressionToTransition(State state, Condition condition){
-        if(state.transition.expression instanceof SimpleExpression
-                && ((SimpleExpression)state.transition.expression).condition == null){
-            ((SimpleExpression)state.transition.expression).condition = condition
-        } else if(state.transition.expression instanceof BooleanExpression){
+    def addExpressionToTransition(State state, Transition transition, Condition condition){
+        state.getTransition().remove(transition)
+        if(transition.expression instanceof SimpleExpression
+                && ((SimpleExpression)transition.expression).condition == null){
+            ((SimpleExpression)transition.expression).condition = condition
+        } else if(transition.expression instanceof BooleanExpression){
             SimpleExpression expression = new SimpleExpression()
             expression.condition = condition
-            ((BooleanExpression)state.transition.expression).right = expression
+            ((BooleanExpression)transition.expression).right = expression
         }
+        state.getTransition().add(transition)
+        transition
     }
 
 
