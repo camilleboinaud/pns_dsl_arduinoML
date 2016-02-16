@@ -10,12 +10,11 @@ import fr.polytech.unice.si5.kernel.behavioral.Transition
 import fr.polytech.unice.si5.kernel.structural.AnalogicalSensor
 import fr.polytech.unice.si5.kernel.structural.DigitalActuator
 import fr.polytech.unice.si5.kernel.structural.DigitalSensor
-import fr.polytech.unice.si5.analogicalML.utils.UnitEnum
+import fr.polytech.unice.si5.analogicalML.utils.LinearUnitEnum
 import fr.polytech.unice.si5.kernel.behavioral.Action
 import fr.polytech.unice.si5.kernel.behavioral.AnalogicalAction
 import fr.polytech.unice.si5.kernel.behavioral.AnalogicalCondition
 import fr.polytech.unice.si5.kernel.behavioral.DigitalCondition
-import fr.polytech.unice.si5.kernel.behavioral.Expression
 import fr.polytech.unice.si5.kernel.behavioral.State
 import fr.polytech.unice.si5.kernel.structural.AnalogicalActuator
 import fr.polytech.unice.si5.kernel.structural.SIGNAL
@@ -82,15 +81,13 @@ abstract class ArduinoMLBasescript extends Script{
                     }]
                 } else {
                     [value: { value ->
-                        [using: { unit ->
-                            addExpressionToTransition(first, transition, anaCondition(sensor, (OPERATOR) field, value, unit))
-                            [and : { newSensor ->
-                                moveToAddExpressionToTransition(first, transition, BOOLEAN.AND)
-                                closure(newSensor)
-                            }, or: { newSensor ->
-                                moveToAddExpressionToTransition(first, transition, BOOLEAN.OR)
-                                closure(newSensor)
-                            }]
+                        addExpressionToTransition(first, transition, anaCondition(sensor, (OPERATOR) field, value))
+                        [and : { newSensor ->
+                            moveToAddExpressionToTransition(first, transition, BOOLEAN.AND)
+                            closure(newSensor)
+                        }, or: { newSensor ->
+                            moveToAddExpressionToTransition(first, transition, BOOLEAN.OR)
+                            closure(newSensor)
                         }]
                     }]
                 }
@@ -142,11 +139,11 @@ abstract class ArduinoMLBasescript extends Script{
         condition
     }
 
-    def anaCondition(AnalogicalSensor sensor, OPERATOR operator, double value, UnitEnum unit){
+    def anaCondition(AnalogicalSensor sensor, OPERATOR operator, double value){
         AnalogicalCondition condition = new AnalogicalCondition()
         condition.setSensor(sensor)
         condition.setOperator(operator)
-        condition.setValueToCompare(convert(unit, value))
+        condition.setValueToCompare(value)
 
         condition
     }
@@ -155,18 +152,6 @@ abstract class ArduinoMLBasescript extends Script{
         ((ArduinoMLBinding) this.getBinding()).getModel().createInitial(map.state)
     }
 
-
-    def convert(UnitEnum unit, double value){
-        def finalValue = value
-        switch (unit){
-            case UnitEnum.CELSIUS_DEGREE:
-                finalValue = value * 20.48 + 102.4
-                break;
-            case UnitEnum.VOLT:
-                break;
-        }
-        finalValue
-    }
 
     def createAction(DigitalActuator actuator, SIGNAL value){
         Action action = new DigitalAction()
