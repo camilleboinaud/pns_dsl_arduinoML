@@ -17,50 +17,54 @@ public class ToWiring extends Visitor<StringBuffer> {
 		this.result = new StringBuffer();
 	}
 
-	private void w(String s) {
+	private void wn(String s) {
 		result.append(String.format("%s\n",s));
+	}
+
+	private void w(String s) {
+		result.append(String.format("%s",s));
 	}
 
 	@Override
 	public void visit(App app) {
-		w("// Wiring code generated from an ArduinoML model");
-		w(String.format("// Application name: %s\n", app.getName()));
+		wn("// Wiring code generated from an ArduinoML model");
+		wn(String.format("// Application name: %s\n", app.getName()));
 
-		w("void setup(){");
+		wn("void setup(){");
 		for(Brick brick: app.getBricks()){
 			brick.accept(this);
 		}
-		w("}\n");
+		wn("}\n");
 
-		w("long time = 0; long debounce = 200;\n");
+		wn("long time = 0; long debounce = 200;\n");
 
 		for(State state: app.getStates()){
 			state.accept(this);
 		}
 
-		w("void loop() {");
-		w(String.format("  state_%s();", app.getInitial().getName()));
-		w("}");
+		wn("void loop() {");
+		wn(String.format("  state_%s();", app.getInitial().getName()));
+		wn("}");
 	}
 
 	@Override
 	public void visit(DigitalActuator actuator) {
-		w(String.format("  pinMode(%d, OUTPUT); // %s [DigitalActuator]", actuator.getPin(), actuator.getName()));
+		wn(String.format("  pinMode(%d, OUTPUT); // %s [DigitalActuator]", actuator.getPin(), actuator.getName()));
 	}
 
 	@Override
 	public void visit(AnalogicalActuator actuator) {
-		w(String.format("  pinMode(%d, OUTPUT); // %s [AnalogicalActuator]", actuator.getPin(), actuator.getName()));
+		wn(String.format("  pinMode(%d, OUTPUT); // %s [AnalogicalActuator]", actuator.getPin(), actuator.getName()));
 	}
 
 	@Override
 	public void visit(DigitalSensor sensor) {
-		w(String.format("  pinMode(%d, INPUT);  // %s [DigitalSensor]", sensor.getPin(), sensor.getName()));
+		wn(String.format("  pinMode(%d, INPUT);  // %s [DigitalSensor]", sensor.getPin(), sensor.getName()));
 	}
 
 	@Override
 	public void visit(AnalogicalSensor sensor) {
-		w(String.format("  pinMode(%d, INPUT);  // %s [AnalogicalSensor]", sensor.getPin(), sensor.getName()));
+		wn(String.format("  pinMode(%d, INPUT);  // %s [AnalogicalSensor]", sensor.getPin(), sensor.getName()));
 	}
 
 
@@ -91,31 +95,31 @@ public class ToWiring extends Visitor<StringBuffer> {
 	@Override
 	public void visit(Transition transition) {
 		if(transition.getExpression() == null) {
-			w(String.format("  state_%s();",  transition.getNext().getName()));
+			wn(String.format("  state_%s();",  transition.getNext().getName()));
 		} else {
 			w(String.format("  if(("));
 			transition.getExpression().accept(this);
-			w(String.format(") && guard ) {"));
+			wn(String.format(") && guard ) {"));
 
-			w("    time = millis();");
+			wn("    time = millis();");
 
-			w(String.format("    state_%s();", transition.getNext().getName()));
-			w("  } else {");
-			w(String.format("    state_%s();", ((State) context.get(CURRENT_STATE)).getName()));
-			w("  }");
+			wn(String.format("    state_%s();", transition.getNext().getName()));
+			wn("  } else {");
+			wn(String.format("    state_%s();", ((State) context.get(CURRENT_STATE)).getName()));
+			wn("  }");
 		}
 	}
 
 	@Override
 	public void visit(State state) {
-		w(String.format("void state_%s() {",state.getName()));
+		wn(String.format("void state_%s() {",state.getName()));
 		for(Action action: state.getActions()) {
 			action.accept(this);
 		}
-		w("  boolean guard = millis() - time > debounce;");
+		wn("  boolean guard = millis() - time > debounce;");
 		context.put(CURRENT_STATE, state);
 		state.getTransition().accept(this);
-		w("}\n");
+		wn("}\n");
 	}
 
 	@Override
@@ -124,37 +128,37 @@ public class ToWiring extends Visitor<StringBuffer> {
 		if( morse != null) {
 			generateMorseArduino(morse, action.getActuator().getPin());
 		} else {
-			w(String.format("  digitalWrite(%d,%s);",action.getActuator().getPin(), action.getValue()));
+			wn(String.format("  digitalWrite(%d,%s);",action.getActuator().getPin(), action.getValue()));
 		}
 	}
 
 	@Override
 	public void visit(AnalogicalAction action) {
-		w(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), (int) action.getValue()));
+		wn(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), (int) action.getValue()));
 	}
 
 	private void generateMorseArduino(MORSESIGNAL morse, int pin) {
 		switch(morse) {
 			case SHORT:
-				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
-				w(String.format("  delay(%d);", UNITY_LENGTH));
-				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
-				w(String.format("  delay(%d);", UNITY_LENGTH));
+				wn(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
+				wn(String.format("  delay(%d);", UNITY_LENGTH));
+				wn(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
+				wn(String.format("  delay(%d);", UNITY_LENGTH));
 				break;
 			case LONG:
-				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
-				w(String.format("  delay(%d);", UNITY_LENGTH * 3));
-				w(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
-				w(String.format("  delay(%d);", UNITY_LENGTH));
+				wn(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.HIGH));
+				wn(String.format("  delay(%d);", UNITY_LENGTH * 3));
+				wn(String.format("  digitalWrite(%d,%s);", pin, SIGNAL.LOW));
+				wn(String.format("  delay(%d);", UNITY_LENGTH));
 				break;
 			case STOP:
-				w(String.format("  delay(%d);", UNITY_LENGTH));
+				wn(String.format("  delay(%d);", UNITY_LENGTH));
 				break;
 			case ESPACE:
-				w(String.format("  delay(%d);", UNITY_LENGTH));
+				wn(String.format("  delay(%d);", UNITY_LENGTH));
 				break;
 			case END:
-				w(String.format("  delay(%d);", UNITY_LENGTH * 10));
+				wn(String.format("  delay(%d);", UNITY_LENGTH * 10));
 				break;
 
 		}

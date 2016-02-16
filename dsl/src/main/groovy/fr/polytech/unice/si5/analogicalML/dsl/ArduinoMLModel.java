@@ -25,9 +25,6 @@ public class ArduinoMLModel {
 
     protected Binding binding;
 
-    private boolean morseEnable = false;
-    private String morseCode = null;
-
     public ArduinoMLModel(Binding binding){
         this.binding = binding;
     }
@@ -58,10 +55,6 @@ public class ArduinoMLModel {
 
         this.bricks.add(actuator);
         this.binding.setVariable(name.toUpperCase(), actuator);
-    }
-    public void createMorse(String name) {
-        this.morseEnable = true;
-        this.morseCode = name;
     }
 
     public void createDigitalActuator(String name, int pin){
@@ -101,8 +94,6 @@ public class ArduinoMLModel {
         app.setBricks(bricks);
         app.setStates(states);
         app.setInitial(initial);
-        app.setMorseCode(this.morseCode);
-        app.setMorseEnable(this.morseEnable);
         Visitor visitor = new ToWiring();
         app.accept(visitor);
 
