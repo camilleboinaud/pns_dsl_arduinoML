@@ -58,27 +58,39 @@ public class KonamiMLModel {
     }
 
     public void createKonami(String konamicode){
-        List<String> code = new ArrayList<>();
-        for (String s: konamicode.split("")){
-            code.add(s);
-        }
+
+
+        DigitalAction redledlow = new DigitalAction();
+        redledlow.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
+        redledlow.setValue(SIGNAL.LOW);
+
+        DigitalAction redledhigh = new DigitalAction();
+        redledhigh.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
+        redledhigh.setValue(SIGNAL.HIGH);
+
+        DigitalAction greenledhlow = new DigitalAction(); // second digital actuator => green led
+        greenledhlow.setActuator((DigitalActuator) this.bricks.get(4));
+        greenledhlow.setValue(SIGNAL.LOW);
+
+        DigitalAction greenledhigh = new DigitalAction(); // second digital actuator => green led
+        greenledhigh.setActuator((DigitalActuator) this.bricks.get(4));
+        greenledhigh.setValue(SIGNAL.HIGH);
+
+        DigitalAction buzzerlow = new DigitalAction(); //third digital actuator => buzzer
+        buzzerlow.setActuator((DigitalActuator) this.bricks.get(5));
+        buzzerlow.setValue(SIGNAL.LOW);
+
+        DigitalAction buzzerhigh = new DigitalAction(); //third digital actuator => buzzer
+        buzzerhigh.setActuator((DigitalActuator) this.bricks.get(5));
+        buzzerhigh.setValue(SIGNAL.HIGH);
 
         //create a success state
         State success = new State();
         success.setName("success");
         List<Action> actionSuccess = new ArrayList<Action>();
-        DigitalAction redledOfStateSuc = new DigitalAction();
-        redledOfStateSuc.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
-        redledOfStateSuc.setValue(SIGNAL.LOW);
-        actionSuccess.add(redledOfStateSuc);
-        DigitalAction greenledOfStateSuc = new DigitalAction(); // second digital actuator => green led
-        greenledOfStateSuc.setActuator((DigitalActuator) this.bricks.get(4));
-        greenledOfStateSuc.setValue(SIGNAL.HIGH);
-        actionSuccess.add(greenledOfStateSuc);
-        DigitalAction buzzerOfStateSuc = new DigitalAction(); //third digital actuator => buzzer
-        buzzerOfStateSuc.setActuator((DigitalActuator) this.bricks.get(5));
-        buzzerOfStateSuc.setValue(SIGNAL.LOW);
-        actionSuccess.add(buzzerOfStateSuc);
+        actionSuccess.add(redledlow);
+        actionSuccess.add(greenledhigh);
+        actionSuccess.add(buzzerlow);
         success.setActions(actionSuccess);
         Transition tranSuc= new Transition();
         tranSuc.setNext(success);
@@ -99,21 +111,9 @@ public class KonamiMLModel {
         State fin = new State();
         fin.setName("fin");
         List<Action> actionFin = new ArrayList<Action>();
-        DigitalAction redledOfStateFin = new DigitalAction();
-        redledOfStateFin.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
-        redledOfStateFin.setValue(SIGNAL.LOW);
-        actionFin.add(redledOfStateFin);
-
-        DigitalAction greenledOfStateFin = new DigitalAction(); // second digital actuator => green led
-        greenledOfStateFin.setActuator((DigitalActuator) this.bricks.get(4));
-        greenledOfStateFin.setValue(SIGNAL.LOW);
-        actionFin.add(greenledOfStateFin);
-
-        DigitalAction buzzerOfStateFin = new DigitalAction(); //third digital actuator => buzzer
-        buzzerOfStateFin.setActuator((DigitalActuator) this.bricks.get(5));
-        buzzerOfStateFin.setValue(SIGNAL.HIGH);
-        actionFin.add(buzzerOfStateFin);
-
+        actionFin.add(redledlow);
+        actionFin.add(greenledhlow);
+        actionFin.add(buzzerhigh);
         fin.setActions(actionFin);
         Transition tranF = new Transition();
         tranF.setNext(fin);
@@ -123,23 +123,16 @@ public class KonamiMLModel {
         State errorWait = new State();
         errorWait.setName("errorwait");
         List<Action> actionErrorWait = new ArrayList<Action>();
-        DigitalAction redledOfStateErrW = new DigitalAction();
-        redledOfStateErrW.setActuator((DigitalActuator) this.bricks.get(3));// first digital actuator => led led
-        redledOfStateErrW.setValue(SIGNAL.HIGH);
-        actionErrorWait.add(redledOfStateErrW);
-
-        DigitalAction greenledOfStateErrW = new DigitalAction(); // second digital actuator => green led
-        greenledOfStateErrW.setActuator((DigitalActuator) this.bricks.get(4));
-        greenledOfStateErrW.setValue(SIGNAL.LOW);
-
-        actionErrorWait.add(greenledOfStateErrW);
-        DigitalAction buzzerOfStateErrW = new DigitalAction(); //third digital actuator => buzzer
-        buzzerOfStateErrW.setActuator((DigitalActuator) this.bricks.get(5));
-        buzzerOfStateErrW.setValue(SIGNAL.LOW);
-        actionErrorWait.add(buzzerOfStateErrW);
+        actionErrorWait.add(redledhigh);
+        actionErrorWait.add(greenledhlow);
+        actionErrorWait.add(buzzerlow);
         errorWait.setActions(actionErrorWait);
-        //to do errorWait Transition
+        //todo errorWait Transition
 
+        List<String> code = new ArrayList<>();
+        for (String s: konamicode.split("")){
+            code.add(s);
+        }
 
         //for each letter except the last one, create two states
         IntStream.range(0, code.size()).forEach(index -> {
@@ -176,6 +169,7 @@ public class KonamiMLModel {
         this.states.add(errorWait);
         this.states.add(fin);
 
+        // if the konami code is "UD", this states list is like {0 1 2 3 4 success error errorwait fin }
         IntStream.range(0, states.size()).forEach(index -> {
             Transition transition = new Transition();
             State to;
@@ -201,5 +195,28 @@ public class KonamiMLModel {
         return visitor.getResult();
     }
 
+    public Condition getCondition(String s){
+        AnalogicalCondition condition = new AnalogicalCondition();
+
+        switch (s){
+            case "U":
+                condition.setSensor((AnalogicalSensor) this.bricks.get(1));// Yaxis
+                condition.setOperator(OPERATOR.GT);
+                condition.setValueToCompare(1000); //todo  value - calY > threshold
+            case "D":
+                condition.setSensor((AnalogicalSensor) this.bricks.get(1));
+                condition.setOperator(OPERATOR.GT);
+                condition.setValueToCompare(10); // todo    calY - value > threshold
+            case "R":
+                condition.setSensor((AnalogicalSensor) this.bricks.get(0));//Xaxis
+                condition.setOperator(OPERATOR.GT); //to   value - calX > threshold
+                condition.setValueToCompare(1000);
+            case"L":
+                condition.setSensor((AnalogicalSensor) this.bricks.get(0)); //Xaxis
+                condition.setOperator(OPERATOR.GT); // todo value - calX > threshold
+                condition.setValueToCompare(10);
+        }
+        return condition;
+    }
 
 }
