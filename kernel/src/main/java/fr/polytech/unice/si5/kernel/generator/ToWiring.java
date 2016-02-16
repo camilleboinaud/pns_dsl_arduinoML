@@ -121,9 +121,11 @@ public class ToWiring extends Visitor<StringBuffer> {
 				w("  else ");
 				state.getTransition().get(i).accept(this);
 			}
-			wn("  else {");
-			wn(String.format("    state_%s();", state.getName()));
-			wn("  }");
+			if((state.getTransition().size() != 1) || (state.getTransition().get(0).getExpression() != null)) {
+				wn("  else {");
+				wn(String.format("    state_%s();", state.getName()));
+				wn("  }");
+			}
 		} else { // warning, entering in this condition will probably generate an infinite loop...
 			wn(String.format("  state_%s();", state.getName()));
 		}
