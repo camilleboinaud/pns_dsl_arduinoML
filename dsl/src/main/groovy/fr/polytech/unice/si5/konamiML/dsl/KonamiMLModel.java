@@ -206,22 +206,21 @@ public class KonamiMLModel {
 
     public Condition getCondition(String s){
         AnalogicalCondition condition = new AnalogicalCondition();
-
         switch (s){
             case "U":
-                condition.setSensor((AnalogicalSensor) this.bricks.get(1));// Yaxis
+                condition.setSensor(yAxis);// Yaxis
                 condition.setOperator(OPERATOR.GT);
                 condition.setValueToCompare(1000); //todo  value - calY > threshold
             case "D":
-                condition.setSensor((AnalogicalSensor) this.bricks.get(1));
+                condition.setSensor(yAxis);
                 condition.setOperator(OPERATOR.GT);
                 condition.setValueToCompare(10); // todo    calY - value > threshold
             case "R":
-                condition.setSensor((AnalogicalSensor) this.bricks.get(0));//Xaxis
+                condition.setSensor(xAxis);//Xaxis
                 condition.setOperator(OPERATOR.GT); //to   value - calX > threshold
                 condition.setValueToCompare(1000);
             case"L":
-                condition.setSensor((AnalogicalSensor) this.bricks.get(0)); //Xaxis
+                condition.setSensor(xAxis); //Xaxis
                 condition.setOperator(OPERATOR.GT); // todo value - calX > threshold
                 condition.setValueToCompare(10);
         }
