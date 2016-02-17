@@ -130,10 +130,16 @@ public class KonamiMLModel {
         State error = new State();
         error.setName("error");
         List<Action> actionError = new ArrayList<Action>();
-        DigitalAction redledOfStateErr = new DigitalAction();
-        redledOfStateErr.setActuator(redled);// first digital actuator => led led
-        redledOfStateErr.setValue(SIGNAL.LOW);
-        actionError.add(redledOfStateErr);
+        actionError.add(redledlow);
+        //todo delay
+        actionError.add(redledhigh);
+        actionError.add(redledlow);
+        //todo delay
+        actionError.add(redledhigh);
+        actionError.add(redledlow);
+        //todo delay
+        actionError.add(redledhigh);
+        error.setActions(actionError);
 
 
         //create state success buzzer is on
