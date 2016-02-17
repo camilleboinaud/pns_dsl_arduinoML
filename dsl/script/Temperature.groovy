@@ -13,8 +13,10 @@ state "OTHER" means BUZZER becomes high and LED becomes 50
 
 initial state : OFF
 
-from OFF to ON when TEMPERATURE became greater_than value 20 using degrees or TEMPERATURE became lower_than value 10 using degrees
-from OFF to OTHER when TEMPERATURE became greater_than value 50 using degrees or TEMPERATURE became lower_than value 0 using degrees
-from ON to OFF when TEMPERATURE became lower_than value 20 using degrees and TEMPERATURE became lower_than value 30 using degrees
+//from OFF to ON when TEMPERATURE == 20.deg
+
+from OFF to ON when TEMPERATURE became greater_than value 20.deg or TEMPERATURE became lower_than value 10.deg
+from OFF to OTHER when TEMPERATURE became greater_than value 50.deg or TEMPERATURE became lower_than value 0.deg
+from ON to OFF when TEMPERATURE became lower_than value 20.deg and TEMPERATURE became lower_than value 30.deg
 
 generate "Temperature";

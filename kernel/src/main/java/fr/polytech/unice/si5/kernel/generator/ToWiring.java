@@ -11,6 +11,7 @@ import fr.polytech.unice.si5.kernel.structural.*;
 public class ToWiring extends Visitor<StringBuffer> {
 
 	public final static int UNITY_LENGTH = 300;
+	private static boolean konamiFlag = false;
 
 	public ToWiring() {
 		this.result = new StringBuffer();
@@ -87,17 +88,32 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(AnalogicalCondition analogicalCondition) {
-		w(String.format("analogRead(%d) %s %d", analogicalCondition.getSensor().getPin(),
-				analogicalCondition.getOperator().getSymbol(), (int)analogicalCondition.getValueToCompare()));
+		if(analogicalCondition.getSensor() == null) {
+			w(String.format("++counter %s %d", analogicalCondition.getOperator().getSymbol(), (int) analogicalCondition.getValueToCompare()));
+		} else {
+			w(String.format("analogRead(%d) %s %d", analogicalCondition.getSensor().getPin(),
+					analogicalCondition.getOperator().getSymbol(), (int) analogicalCondition.getValueToCompare()));
+		}
 	}
 
 	@Override
 	public void visit(Transition transition) {
+		Expression expression = transition.getExpression();
 		if(transition.getExpression() == null) {
-			wn(String.format("  state_%s();",  transition.getNext().getName()));
+			wn(String.format("  state_%s();", transition.getNext().getName()));
 		} else {
+			if((expression instanceof SimpleExpression) && !konamiFlag) {
+				Condition condition = ((SimpleExpression) expression).getCondition();
+				if(condition instanceof AnalogicalCondition) {
+					if(((AnalogicalCondition)condition).getSensor() == null) {
+						w(String.format("  static int counter = 0;\n"));
+						konamiFlag = true;
+					}
+				}
+			}
 			w(String.format("  if(("));
 			transition.getExpression().accept(this);
+
 			wn(String.format(") && guard ) {"));
 
 			wn("    time = millis();");
@@ -109,7 +125,7 @@ public class ToWiring extends Visitor<StringBuffer> {
 
 	@Override
 	public void visit(State state) {
-		wn(String.format("void state_%s() {",state.getName()));
+		wn(String.format("void state_%s() {", state.getName()));
 		for(Action action: state.getActions()) {
 			action.accept(this);
 		}
@@ -121,9 +137,11 @@ public class ToWiring extends Visitor<StringBuffer> {
 				w("  else ");
 				state.getTransition().get(i).accept(this);
 			}
-			wn("  else {");
-			wn(String.format("    state_%s();", state.getName()));
-			wn("  }");
+			if((state.getTransition().size() != 1) || (state.getTransition().get(0).getExpression() != null)) {
+				wn("  else {");
+				wn(String.format("    state_%s();", state.getName()));
+				wn("  }");
+			}
 		} else { // warning, entering in this condition will probably generate an infinite loop...
 			wn(String.format("  state_%s();", state.getName()));
 		}
@@ -136,13 +154,13 @@ public class ToWiring extends Visitor<StringBuffer> {
 		if( morse != null) {
 			generateMorseArduino(morse, action.getActuator().getPin());
 		} else {
-			wn(String.format("  digitalWrite(%d,%s);",action.getActuator().getPin(), action.getValue()));
+			wn(String.format("  digitalWrite(%d,%s);", action.getActuator().getPin(), action.getValue()));
 		}
 	}
 
 	@Override
 	public void visit(AnalogicalAction action) {
-		wn(String.format("  analogWrite(%d,%d);",action.getActuator().getPin(), (int) action.getValue()));
+		wn(String.format("  analogWrite(%d,%d);", action.getActuator().getPin(), (int) action.getValue()));
 	}
 
 	private void generateMorseArduino(MORSESIGNAL morse, int pin) {

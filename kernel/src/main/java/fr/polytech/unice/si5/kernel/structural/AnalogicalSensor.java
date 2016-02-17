@@ -1,5 +1,7 @@
 package fr.polytech.unice.si5.kernel.structural;
 
+import fr.polytech.unice.si5.kernel.behavioral.AnalogicalCondition;
+import fr.polytech.unice.si5.kernel.behavioral.OPERATOR;
 import fr.polytech.unice.si5.kernel.generator.Visitor;
 
 /**
@@ -11,5 +13,15 @@ public class AnalogicalSensor extends AnalogicalBrick {
     public void accept(Visitor visitor) {
         visitor.visit(this);
     }
+
+    /*AnalogicalCondition equals(double value){
+        AnalogicalCondition condition = new AnalogicalCondition();
+
+        condition.setSensor(this);
+        condition.setOperator(OPERATOR.EQ);
+        condition.setValueToCompare(value);
+
+        return condition;
+    }*/
 
 }
