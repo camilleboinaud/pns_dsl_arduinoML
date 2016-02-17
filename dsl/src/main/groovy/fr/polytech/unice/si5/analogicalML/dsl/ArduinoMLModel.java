@@ -85,6 +85,7 @@ public class ArduinoMLModel {
         from.getTransition().add(transition);
     }
 
+    @SuppressWarnings("rawtypes")
     public Object generate(String name){
         App app = new App();
         app.setName(name);
