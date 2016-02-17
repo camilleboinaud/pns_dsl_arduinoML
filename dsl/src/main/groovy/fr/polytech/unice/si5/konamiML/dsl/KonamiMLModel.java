@@ -86,30 +86,40 @@ public class KonamiMLModel {
 
     public void createKonami(String konamicode){
 
-
+        //redled low
         DigitalAction redledlow = new DigitalAction();
-        redledlow.setActuator(redled);// first digital actuator => led led
+        redledlow.setActuator(redled);
         redledlow.setValue(SIGNAL.LOW);
 
+        //redled high
         DigitalAction redledhigh = new DigitalAction();
-        redledhigh.setActuator(redled);  // first digital actuator => led led
+        redledhigh.setActuator(redled);
         redledhigh.setValue(SIGNAL.HIGH);
 
-        DigitalAction greenledhlow = new DigitalAction(); // second digital actuator => green led
+        //greenled low
+        DigitalAction greenledhlow = new DigitalAction();
         greenledhlow.setActuator(greenled);
         greenledhlow.setValue(SIGNAL.LOW);
 
-        DigitalAction greenledhigh = new DigitalAction(); // second digital actuator => green led
+        //greenled high
+        DigitalAction greenledhigh = new DigitalAction();
         greenledhigh.setActuator(greenled);
         greenledhigh.setValue(SIGNAL.HIGH);
 
-        DigitalAction buzzerlow = new DigitalAction(); //third digital actuator => buzzer
+        //buzzer low
+        DigitalAction buzzerlow = new DigitalAction();
         buzzerlow.setActuator(buzzer);
         buzzerlow.setValue(SIGNAL.LOW);
 
-        DigitalAction buzzerhigh = new DigitalAction(); //third digital actuator => buzzer
+        //buzzer high
+        DigitalAction buzzerhigh = new DigitalAction();
         buzzerhigh.setActuator(buzzer);
         buzzerhigh.setValue(SIGNAL.HIGH);
+
+        //delay action
+        DelayAction delayAction = new DelayAction();
+        delayAction.setDelay(DELAY_UNIT);
+
 
         //create a success state
         State success = new State();
@@ -119,11 +129,6 @@ public class KonamiMLModel {
         actionSuccess.add(greenledhigh);
         actionSuccess.add(buzzerlow);
         success.setActions(actionSuccess);
-        /*List<Transition> transitionsSuc = new ArrayList<>();
-        Transition tranSuc= new Transition();
-        tranSuc.setNext(success);
-        transitionsSuc.add(tranSuc);
-        success.setTransition(transitionsSuc);*/
 
 
         //create state error, just three attempt
@@ -131,20 +136,22 @@ public class KonamiMLModel {
         error.setName("error");
         List<Action> actionError = new ArrayList<Action>();
         actionError.add(redledlow);
-        //todo delay
+        actionError.add(delayAction);
         actionError.add(redledhigh);
+        actionError.add(delayAction);
         actionError.add(redledlow);
-        //todo delay
+        actionError.add(delayAction);
         actionError.add(redledhigh);
+        actionError.add(delayAction);
         actionError.add(redledlow);
-        //todo delay
+        actionError.add(delayAction);
         actionError.add(redledhigh);
         actionError.add(greenledhlow);
         actionError.add(buzzerlow);
         error.setActions(actionError);
 
 
-        //create state success buzzer is on
+        //create state fin buzzer is on
         State fin = new State();
         fin.setName("exit");
         List<Action> actionFin = new ArrayList<Action>();
@@ -152,11 +159,6 @@ public class KonamiMLModel {
         actionFin.add(greenledhlow);
         actionFin.add(buzzerhigh);
         fin.setActions(actionFin);
-       /* List<Transition> transitionsF = new ArrayList<>();
-        Transition tranF = new Transition();
-        tranF.setNext(fin);
-        transitionsF.add(tranF);
-        fin.setTransition(transitionsF);*/
 
         //create error wait state
         State errorWait = new State();
@@ -174,7 +176,7 @@ public class KonamiMLModel {
         }
 
         //for each letter except the last one, create two states
-        // This block is to create the states
+        // This block is to create the states according to the konami code
         IntStream.range(0, code.size()).forEach(index -> {
             State state1 = new State();
             state1.setName("state" + index*2);
@@ -259,13 +261,6 @@ public class KonamiMLModel {
         transitionsErr.add(transitionToExit);
         error.setTransition(transitionsErr);
 
-        //Set the actions of the Error state
-        List<Action> errActions = new ArrayList<>();
-        DelayAction delayAction1 = new DelayAction();
-        delayAction1.setDelay(DELAY_UNIT);
-        errActions.add(delayAction1);
-        error.setActions(errActions);
-
     }
 
     @SuppressWarnings("rawtypes")
@@ -287,27 +282,27 @@ public class KonamiMLModel {
             case "U":
                 condition.setSensor(yAxis);// Yaxis
                 condition.setOperator(OPERATOR.GT);
-                condition.setValueToCompare(ORIGIN_YAIS + THRESHOLD); //todo  value - calY > threshold
+                condition.setValueToCompare(ORIGIN_YAIS + THRESHOLD); //value - calY > threshold
                 expression = new SimpleExpression();
                 ((SimpleExpression)expression).setCondition(condition);
                 break;
             case "D":
                 condition.setSensor(yAxis);
                 condition.setOperator(OPERATOR.LT);
-                condition.setValueToCompare(ORIGIN_YAIS - THRESHOLD); // todo    calY - value > threshold
+                condition.setValueToCompare(ORIGIN_YAIS - THRESHOLD);
                 expression = new SimpleExpression();
                 ((SimpleExpression)expression).setCondition(condition);
                 break;
             case "R":
                 condition.setSensor(xAxis);//Xaxis
-                condition.setOperator(OPERATOR.GT); //to   value - calX > threshold
+                condition.setOperator(OPERATOR.GT); //value - calX > threshold
                 condition.setValueToCompare(ORIGIN_XAIS + THRESHOLD);
                 expression = new SimpleExpression();
                 ((SimpleExpression)expression).setCondition(condition);
                 break;
             case "L":
                 condition.setSensor(xAxis); //Xaxis
-                condition.setOperator(OPERATOR.LT); // todo value - calX > threshold
+                condition.setOperator(OPERATOR.LT);
                 condition.setValueToCompare(ORIGIN_YAIS - THRESHOLD);
                 expression = new SimpleExpression();
                 ((SimpleExpression)expression).setCondition(condition);
@@ -494,6 +489,7 @@ public class KonamiMLModel {
         return booleanExpression;
     }
 
+    //expression for error state
     private Expression getExpressionTo1() {
         SimpleExpression expression = new SimpleExpression();
         AnalogicalCondition analogicalCondition = new AnalogicalCondition();
@@ -503,6 +499,7 @@ public class KonamiMLModel {
         return expression;
     }
 
+    //expression for error state
     private Expression getExpressionToExit() {
         SimpleExpression expression = new SimpleExpression();
         AnalogicalCondition analogicalCondition = new AnalogicalCondition();
