@@ -18,6 +18,7 @@ public abstract class Visitor<T> {
 
 	public abstract void visit(DigitalAction action);
 	public abstract void visit(AnalogicalAction action);
+	public abstract void visit(DelayAction action);
 
 	public abstract void visit(DigitalActuator actuator);
 	public abstract void visit(AnalogicalActuator actuator);

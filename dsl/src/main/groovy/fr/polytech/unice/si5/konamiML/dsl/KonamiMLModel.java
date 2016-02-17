@@ -33,6 +33,7 @@ public class KonamiMLModel {
     public static final int ORIGIN_XAIS = 512;
     public static final int ORIGIN_YAIS = 512;
     public static final int COUNTER = 3;
+    public static final int DELAY_UNIT = 300;
 
     public KonamiMLModel(Binding binding){
         this.binding = binding;
@@ -145,7 +146,7 @@ public class KonamiMLModel {
 
         //create state success buzzer is on
         State fin = new State();
-        fin.setName("fin");
+        fin.setName("exit");
         List<Action> actionFin = new ArrayList<Action>();
         actionFin.add(redledlow);
         actionFin.add(greenledhlow);
@@ -236,7 +237,7 @@ public class KonamiMLModel {
             }
         });
 
-        //TODO errorWait Transition
+        // errorWait Transition
         List<Transition> transitionsErrorWait = new ArrayList<>();
         Transition transitionErrWait = new Transition();
         transitionErrWait.setExpression(getPushSuccessExpression());
@@ -245,7 +246,7 @@ public class KonamiMLModel {
         errorWait.setTransition(transitionsErrorWait);
 
 
-        //TODO error Transition
+        // error Transition
         //Error has two transitions depends on a counter
         List<Transition> transitionsErr = new ArrayList<>();
         Transition transitionTo1 = new Transition();
@@ -257,6 +258,13 @@ public class KonamiMLModel {
         transitionsErr.add(transitionTo1);
         transitionsErr.add(transitionToExit);
         error.setTransition(transitionsErr);
+
+        //Set the actions of the Error state
+        List<Action> errActions = new ArrayList<>();
+        DelayAction delayAction1 = new DelayAction();
+        delayAction1.setDelay(DELAY_UNIT);
+        errActions.add(delayAction1);
+        error.setActions(errActions);
 
     }
 

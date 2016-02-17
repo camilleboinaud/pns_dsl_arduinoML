@@ -163,6 +163,10 @@ public class ToWiring extends Visitor<StringBuffer> {
 		wn(String.format("  analogWrite(%d,%d);", action.getActuator().getPin(), (int) action.getValue()));
 	}
 
+	@Override
+	public void visit(DelayAction action) {
+		wn(String.format("  delay(%d);", action.getDelay()));
+	}
 	private void generateMorseArduino(MORSESIGNAL morse, int pin) {
 		switch(morse) {
 			case SHORT:
