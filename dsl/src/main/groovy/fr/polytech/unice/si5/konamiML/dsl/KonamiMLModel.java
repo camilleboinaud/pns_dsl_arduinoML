@@ -5,7 +5,6 @@ import fr.polytech.unice.si5.kernel.behavioral.*;
 import fr.polytech.unice.si5.kernel.generator.ToWiring;
 import fr.polytech.unice.si5.kernel.generator.Visitor;
 import fr.polytech.unice.si5.kernel.structural.*;
-import fr.polytech.unice.si5.konamiML.utils.KonamiMapper;
 import groovy.lang.Binding;
 
 import java.util.ArrayList;
