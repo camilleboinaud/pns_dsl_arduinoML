@@ -7,6 +7,7 @@ public enum OPERATOR {
 
     NE("!"),
     EQ("="),
+    EE("=="),
     LE("<="),
     GE(">="),
     LT("<"),
