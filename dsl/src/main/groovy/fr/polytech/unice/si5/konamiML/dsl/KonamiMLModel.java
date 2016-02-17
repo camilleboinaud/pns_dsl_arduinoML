@@ -139,6 +139,8 @@ public class KonamiMLModel {
         actionError.add(redledlow);
         //todo delay
         actionError.add(redledhigh);
+        actionError.add(greenledhlow);
+        actionError.add(buzzerlow);
         error.setActions(actionError);
 
 
