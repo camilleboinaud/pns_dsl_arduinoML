@@ -10,7 +10,6 @@ import fr.polytech.unice.si5.kernel.behavioral.Transition
 import fr.polytech.unice.si5.kernel.structural.AnalogicalSensor
 import fr.polytech.unice.si5.kernel.structural.DigitalActuator
 import fr.polytech.unice.si5.kernel.structural.DigitalSensor
-import fr.polytech.unice.si5.analogicalML.utils.LinearUnitEnum
 import fr.polytech.unice.si5.kernel.behavioral.Action
 import fr.polytech.unice.si5.kernel.behavioral.AnalogicalAction
 import fr.polytech.unice.si5.kernel.behavioral.AnalogicalCondition
@@ -165,11 +164,6 @@ abstract class ArduinoMLBasescript extends Script{
         action.setActuator(actuator)
         action.setValue(value)
         action
-    }
-
-    // morse "name"
-    def morse(String name) {
-        ((ArduinoMLBinding)this.getBinding()).getModel().createMorse(name)
     }
 
     // generate name

@@ -19,4 +19,4 @@ from OFF to ON when TEMPERATURE became greater_than value 20.deg or TEMPERATURE 
 from OFF to OTHER when TEMPERATURE became greater_than value 50.deg or TEMPERATURE became lower_than value 0.deg
 from ON to OFF when TEMPERATURE became lower_than value 20.deg and TEMPERATURE became lower_than value 30.deg
 
-generate "Temperature";
+generate "Temperature"

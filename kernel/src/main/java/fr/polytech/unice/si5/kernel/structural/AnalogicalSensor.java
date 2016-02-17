@@ -14,14 +14,4 @@ public class AnalogicalSensor extends AnalogicalBrick {
         visitor.visit(this);
     }
 
-    /*AnalogicalCondition equals(double value){
-        AnalogicalCondition condition = new AnalogicalCondition();
-
-        condition.setSensor(this);
-        condition.setOperator(OPERATOR.EQ);
-        condition.setValueToCompare(value);
-
-        return condition;
-    }*/
-
 }

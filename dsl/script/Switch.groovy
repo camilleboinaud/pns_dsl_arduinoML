@@ -10,7 +10,7 @@ state "on" means LED becomes high
 
 initial state : OFF
 
-change from: OFF, to: ON when ROTATION became greater_than value 500 using volts
-change from: ON, to: OFF when ROTATION became lower_than value 500 using volts
+from OFF to ON when ROTATION became greater_than value 50.deg
+from ON to OFF when ROTATION became lower_than value 50.deg
 
-generate("Switch");
+generate "Switch"
